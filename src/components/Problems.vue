@@ -156,7 +156,10 @@ let list = [];
 
 // console.log(generateData.problems[0].options.length);
 const replaceBody = (index, body) => {
-  return index + 1 + "." + body.slice(3);
+  // return index + 1 + "." + body.slice(3);
+  return index + 1 + "." + body;
+  // return index + 1 + "." + body.slice(3);
+
 };
 // 批量处理
 const batchHandle = () => {
