@@ -29,10 +29,10 @@ const goToPersonalTopic = ()=>{
     
     <div style="display: relative;">
     <div class="imgbox">
-        <div class="imgbox1"><div class="imgbox2" @click="goToSelectFilter"><img style="width:13.89vw;height: 20.21vh;" src="../../assets/selectFilter.svg"></div><div class="imgbox3">筛选生成</div></div>
-        <div class="imgbox1"><div class="imgbox2" @click="goToGenerationTopic"><img style="width:12.11vw;height: 25.98vh;" src="../../assets/generationTopic.svg"></div><div class="imgbox3">以题生题</div></div>
-        <div class="imgbox1"><div class="imgbox2" @click="goToTotalGeneration"><img style="width:12.22vw;height: 31.64vh;" src="../../assets/totalGeneration.svg"></div><div class="imgbox3">整卷生成</div></div>
-        <div class="imgbox1"><div class="imgbox2" @click="goToPersonalTopic"><img style="width:6.26vw;height: 15.09vh;margin-top: 4.5vh;" src="../../assets/personalTopic1.svg"><img style="width:6.26vw;height: 15.09vh;margin-bottom: 4.5vh;" src="../../assets/personalTopic2.svg"></div><div class="imgbox3">个人题库</div></div>
+        <div class="imgbox1" @click="goToSelectFilter"><div class="imgbox2"><img style="width:13.89vw;height: 20.21vh;" src="../../assets/selectFilter.svg"></div><div class="imgbox3">筛选生成</div></div>
+        <div class="imgbox1" @click="goToGenerationTopic"><div class="imgbox2"><img style="width:12.11vw;height: 25.98vh;" src="../../assets/generationTopic.svg"></div><div class="imgbox3">以题生题</div></div>
+        <div class="imgbox1" @click="goToTotalGeneration"><div class="imgbox2"><img style="width:12.22vw;height: 31.64vh;" src="../../assets/totalGeneration.svg"></div><div class="imgbox3">整卷生成</div></div>
+        <div class="imgbox1" @click="goToPersonalTopic"><div class="imgbox2"><img style="width:6.26vw;height: 15.09vh;margin-top: 4.5vh;" src="../../assets/personalTopic1.svg"><img style="width:6.26vw;height: 15.09vh;margin-bottom: 4.5vh;" src="../../assets/personalTopic2.svg"></div><div class="imgbox3">个人题库</div></div>
     </div></div>
 </template>
 <style lang="scss">

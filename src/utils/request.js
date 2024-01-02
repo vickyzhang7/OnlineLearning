@@ -16,8 +16,9 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     // TODO 2. 携带token
-    const token = localStorage.getItem("token")
     const useStore = useUserStore()
+    const token = useStore.getToken()
+    
     if (useStore.token) {
       config.headers.satoken = useStore.token
     }else if(token != null && token.length > 0){

@@ -23,7 +23,8 @@ const formModel = ref({
   saveToken:false
   
 })
-const sms = reactive({
+
+const sms = reactive({ //验证码
   disabled:false,
   waitTime:60,
   count:0
@@ -109,19 +110,14 @@ const login = async () => {
     if(formModel.value.isChecked === true){
         await form.value.validate()
          const res = await userLoginService(formModel.value)  
-         userStore.setToken(res.data.data.data.tokenValue,formModel.value.saveToken)
+         userStore.setToken(res.data.data.data.tokenValue,formModel.value.saveToken,false)
         //发送请求获取用户信息
 
         /* const userInfo = await userGetInfoService()
         userStore.setUser(userInfo.data) */
         ElMessage.success('登录成功')
         if(formModel.value.saveToken){//30天免登录
-          localStorage.setItem("userId", formModel.value.username);
-          localStorage.setItem("password", formModel.value.password);
-          
-        }else{
-          localStorage.removeItem("userId");
-          localStorage.removeItem("password");
+          userStore.setToken(res.data.data.data.tokenValue,formModel.value.saveToken,true)        
         }
          router.push('/firstPage')
         }else{
@@ -164,20 +160,38 @@ const sendCode = async () =>{
     await uesrVerifyEmail(formModel.value.email)
   }
 }
+// 判断表单是否为空的函数
+const isFormEmpty = () => {
+ return Object.values(formModel.value).some(value => value === '');
+};
+// 处理表单变化的函数
+const handleFormChange = () => {
+  // 判断表单是否为空
+  if (isFormEmpty()) {
+    // 触发相应的函数
+    document.querySelector('.button-login').style.backgroundColor = '#BDCEFC';
+  }else{
+    document.querySelector('.button-login').style.backgroundColor = '#6666FF';
+  }
+};
 
 onMounted(()=>{
   //1.携带token请求用户信息
-  let usernameId = localStorage.getItem("userId");
+  /* let usernameId = localStorage.getItem("userId");
     if(usernameId){//如果用户之前选择了30天免登陆，那就说明存储了useriId
       formModel.value.username = localStorage.getItem("userId")
       formModel.value.password = localStorage.getItem("password")
-      formModel.value.saveToken = true
+      formModel.value.saveToken = true */
+      let token = userStore.getToken()//有token就30天免登录
+      if(token){
       router.push("/") //跳转首页
-      console.log('跳转')
     }
-    console.log('用户id为0')
+
+    // 监听表单变化
+    handleFormChange()
   }
 )
+ 
 //切换为登录的时候，重置表单内容
 watch(isLogin, () => {
   formModel.value = {
@@ -210,6 +224,17 @@ watch(isForget, () =>{
     isChecked:Boolean
     }
 })
+/* watch(()=>formModel,()=>{
+  // 判断表单是否为空
+  if (isFormEmpty()) {
+    // 触发相应的函数
+    // document.querySelector('.button-login').style.backgroundColor = '#BDCEFC';
+    console.log('有空到')
+  }else{
+    document.querySelector('.button-login').style.backgroundColor = '#6666FF';
+    console.log('不空了')
+  } //未有效触发，有bug
+}) */
 </script>
 
 <template>
@@ -237,6 +262,7 @@ watch(isForget, () =>{
       <el-form
         :model="formModel"
         :rules="rules"
+        @change="handleFormChange()"
         ref="form"
         size="large"
         autocomplete="off"
@@ -319,6 +345,7 @@ watch(isForget, () =>{
       <el-form
         :model="formModel"
         :rules="rules"
+        @change="handleFormChange()"
         ref="form"
         size="large"
         autocomplete="off"
@@ -368,6 +395,7 @@ watch(isForget, () =>{
       <el-form
       :model="formModel"
         :rules="rules"
+        @change="handleFormChange()"
         ref="form"
         size="large"
         autocomplete="off"
@@ -458,7 +486,7 @@ watch(isForget, () =>{
     }
     .button-login {
       width: 100%;
-      background-color: #6666FF;
+      background-color: #BDCEFC;
       color:#FFFFFF;
       border-radius: 50px;
     }

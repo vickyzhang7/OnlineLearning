@@ -53,53 +53,46 @@
      -->
       </div>
     </div>
+     <!-- 下面是生成提示弹窗 -->
+    <el-dialog
+      :modal="false"
+      v-model="getRightUnderChecked.dialogVisible"
+      width="20.8vw"
+      :before-close="handleClose"
+      top="55vh"
+      class="dialogSet"
+    >
+      <div class="dialog-content">
+      
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12.3197 5C13.0378 5 13.62 5.56281 13.62 6.3003C13.62 7.05719 13.0378 7.62 12.3197 7.62C11.5822 7.62 11 7.05719 11 6.3003C11 5.56281 11.5822 5 12.3197 5ZM11.3215 18.9077V9.45629C11.3215 8.95169 11.7752 8.6994 12.2729 8.6994C12.7527 8.6994 13.2243 8.95169 13.2243 9.45629V18.9077C13.2243 19.4317 12.7527 19.684 12.2729 19.684C11.7752 19.684 11.3215 19.4317 11.3215 18.9077Z" fill="#6666FF"/>
+        </svg>
+
+        <span>生成中</span>
+      </div>
+      <p class="dialog-p">点击右上角符号进行多项业务同步生成同时查看同步生成的所有业务</p>
+      <div class="bar"></div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button
+            class="set-other-btn2"
+            @click="getRightUnderChecked.setDialogVisibleFlase()"
+            >在当前生成页面等待</el-button
+          >
+          <el-button class="set-other-btn1" @click="getRightUnderChecked.setDialogVisibleFlase()"
+            >同步生成</el-button
+          >
+        </span>
+      </template>
+    </el-dialog>
   </slot>
-   <!-- 下面是生成提示弹窗 -->
-  <el-dialog
-    :modal="false"
-    v-model="getRightUnderChecked.dialogVisible"
-    width="20.8vw"
-    :before-close="handleClose"
-    top="55vh"
-  >
-    <div class="dialog-content">
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12.3197 5C13.0378 5 13.62 5.56281 13.62 6.3003C13.62 7.05719 13.0378 7.62 12.3197 7.62C11.5822 7.62 11 7.05719 11 6.3003C11 5.56281 11.5822 5 12.3197 5ZM11.3215 18.9077V9.45629C11.3215 8.95169 11.7752 8.6994 12.2729 8.6994C12.7527 8.6994 13.2243 8.95169 13.2243 9.45629V18.9077C13.2243 19.4317 12.7527 19.684 12.2729 19.684C11.7752 19.684 11.3215 19.4317 11.3215 18.9077Z"
-          fill="#6666FF"
-        />
-      </svg>
-     
-      <span>生成中</span>
-    </div>
-    <p class="dialog-p">点击右上角符号进行多项业务同步生成同时查看同步生成的所有业务</p>
-    <div class="bar"></div>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button
-          class="set-other-btn2"
-          @click="getRightUnderChecked.setDialogVisibleFlase()"
-          >在当前生成页面等待</el-button
-        >
-        <el-button class="set-other-btn1" @click="getRightUnderChecked.setDialogVisibleFlase()"
-          >同步生成</el-button
-        >
-      </span>
-    </template>
-  </el-dialog>
+   
 </template>
 
 <script setup>
 import { getCheckedStore } from "@/stores";
 import { ref } from "vue";
+import mitter from '@/utils/eventBus'
 
 const getRightUnderChecked = getCheckedStore();
 const step = ref(5); //进度条
@@ -142,6 +135,8 @@ const startLoading = () => {
     }
   });
 };
+mitter.on('progress', startLoading()) //兄弟传值
+
 </script>
 
 <style lang="scss">
@@ -231,9 +226,17 @@ const startLoading = () => {
   span {
     position: absolute;
     bottom: 0.5vh;
-    left: 1.5vw;
+    left: 2vw;
     font-weight: 700;
   }
+}
+.el-icon svg{
+    display: none;
+  }
+.dialogSet{ //弹窗
+  position: absolute;
+  left: 46vw;
+  top: 4vh;
 }
 .el-dialog__body {
   padding: 0;

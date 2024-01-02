@@ -6,6 +6,7 @@
     </div>
     <div class="innercon">
       <div class="problem-body">
+        <!-- 试题集 -->
         <span class="title">试题集</span>
         <div
           class="itemCon"
@@ -14,10 +15,13 @@
         >
           <div style="position: relative">
             <el-checkbox style="position: absolute; top: -0.2vh" v-model="item.isSelet" />
+            <!-- 试题集的问题 -->
             <p style="margin-left: 1vw">{{ replaceBody(index, item.data.body) }}</p>
           </div>
           <div class="optionsCon">
-            <p class="options-item" v-for="i in item.data.options" :key="i">{{ i }}</p>
+            <!-- 试题集的选项 -->
+            <p class="options-item" v-for="i in item.data.options" :key="i">{{ i }}</p> 
+
           </div>
         </div>
       </div>
@@ -89,7 +93,7 @@ import {
 } from "@/api/selectFilter";
 import { ref, onMounted, computed } from "vue";
 import { ElMessage } from "element-plus";
-import AddProblemSet from "./addproblemset.vue";
+import AddProblemSet from "./AddProblemSet.vue";
 import ProblemTopSelect from "./ProblemTopSelect.vue";
 import { useRouter } from "vue-router";
 // const seletList = ref([])
@@ -193,7 +197,7 @@ const textEncapsulation = () => {
 
 // 获取用户题集列表
 const getList = () => {
-  generateData.getUserProblemSetList();
+  generateData.getUserProblemSetList(); //个人题库模块的右侧信息获取，与左侧试题集无关
 };
 
 // 打开添加用户题集

@@ -67,14 +67,20 @@
 <script setup>
 import { getCheckedStore } from "@/stores";
 import { ref } from "vue";
+import mitter from '@/utils/eventBus'
 const generateData = getCheckedStore();
 const numToString = ["一", "二", "三", "四", "五"];
-console.log(generateData);
+const tip = ref(true)
 const replaceBody = (index, body) => {
   return index + 1 + "." + body;
 };
+const emit = defineEmits();
 const reGenerateHandle = () => {
   generateData.regenerate();
+  //添加进度条功能，用emit传值:先定义一个函数，在这个函数使用rightunderTopic传过来的函数
+  mitter.emit("progress");
+  
+  mitter.emit('tip',tip.value)
 };
 const cancleHandle = () => {
   generateData.isShow = !generateData.isShow;
@@ -176,6 +182,8 @@ const addDataBase = (id) => {
     border-radius: 10px;
     text-align: center;
     line-height: 6.5vh;
+    position: sticky;
+    bottom: 0px;
     .set-other-btn1 {
       color: #fff;
       background-color: #6666ff;

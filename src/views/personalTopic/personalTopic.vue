@@ -41,7 +41,7 @@ const handleCom = (mode) => {
 };
 
 onMounted(() => {
-  problemsHandle.getUserProblems();
+  problemsHandle.getUserProblems(); //获取试题集
 });
 </script>
 
@@ -57,11 +57,11 @@ onMounted(() => {
           font-size: 0.9vw;
         "
       >
-        <div>
+        <!-- <div>
           <el-icon @click="handleLeft" style="margin-left: 0.42vw"><CaretLeft /></el-icon>
         </div>
         <div style="font-weight: 600; margin-left: 0.2vw">生成参考</div>
-        <div style="margin-left: 4.4vw; color: #979797" @click="resetChecked">重置</div>
+        <div style="margin-left: 4.4vw; color: #979797" @click="resetChecked">重置</div> -->
       </div>
       <div
         style="
@@ -73,11 +73,11 @@ onMounted(() => {
           font-size: 0.9vw;
         "
       >
-        <div style="margin-right: 0.8vw; color: #6666ff" @click="isKnowledge" id="know">
+       <!--  <div style="margin-right: 0.8vw; color: #6666ff" @click="isKnowledge" id="know">
           知识点生成
         </div>
         |
-        <div style="margin-left: 0.9vw" id="text" @click="isText">教材生成</div>
+        <div style="margin-left: 0.9vw" id="text" @click="isText">教材生成</div> -->
       </div>
       <left-topic></left-topic>
       <!-- 左侧插槽 -->
@@ -119,6 +119,7 @@ onMounted(() => {
   width: 13.33vw;
   background-color: white;
   border-radius: 1vw 1vw 1vw 1vw;
+  color: black;
 }
 .underRight {
   height: 100%;

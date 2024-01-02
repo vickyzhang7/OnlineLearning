@@ -123,6 +123,7 @@ export const getCheckedStore = defineStore('getChecked', () => {
     checkedArrTotal.value = checkedArr.value.concat(checkedArr1.value)
     console.log(checkedArrTotal.value)
   }
+  // 生成
   const generateClick = async (description) => {
     if (checkedArr1.value[1] === null ||checkedArr1.value.length === 0 || checkedTop.value.region === '' || checkedTop.value.grade === 0 || checkedTop.value.genre === '' || checkedTop.value.subject === '' || checkedTop.value.textbook === '') {
       //去校验top表单
@@ -175,12 +176,13 @@ export const getCheckedStore = defineStore('getChecked', () => {
             // 测试，用后即删
             // const problem = await getProblemVO(68)
             // const analysis = await getProblem(68)
-            console.log('这是problem', problem.data.data);
-            console.log('这是analysis', problem.data.data);
+            // console.log('这是problem', problem.data.data);
+            // console.log('这是analysis', problem.data.data);
 
             totalGenerationProblem.value[item].dataVO = problem.data.data
             totalGenerationProblem.value[item].dataAnalysis = analysis.data.data
             console.log(totalGenerationProblem.value[item]);
+            
             isShow.value = false
             isLoading.value = false
           } else if (r.data.data === 'FAILED') {
@@ -213,16 +215,18 @@ export const getCheckedStore = defineStore('getChecked', () => {
     isLoading.value = true
     isShow.value = true
     try {
-      const res = await reGenerate(generateId.value)
-      interval = setInterval(async () => {
+      const res = await reGenerate(totalGenerationProblem.value[currentItem.value].generateId)
+      console.log('重新生成结果:', res)
+
+      const interval = setInterval(async () => {
         try {
-          const r = await getGeneration(generateId.value)
+          const r = await getGeneration(totalGenerationProblem.value[currentItem.value].generateId)
           console.log(r.data.data);
           if (r.data.data === 'FINISHED') {
             clearInterval(interval)
-            const problem = await getProblemVO(generateId.value)
-            const analysis = await getProblem(generateId.value)
-            console.log(problem.data.data);
+
+            const problem = await getProblemVO(totalGenerationProblem.value[currentItem.value].generateId)
+            const analysis = await getProblem(totalGenerationProblem.value[currentItem.value].generateId)
             problems.value = problem.data.data
             problemsAnalysis.value = analysis.data.data
             isLoading.value = false
@@ -251,7 +255,6 @@ export const getCheckedStore = defineStore('getChecked', () => {
   const addUserProblems = async (id) => {
     try {
       const res = await addUserProblem(id)
-      // console.log(res.data);
       if (res.data.data === '添加成功') {
         ElMessage.success('添加题库成功！')
       }
@@ -270,7 +273,6 @@ export const getCheckedStore = defineStore('getChecked', () => {
       for (let i = 0; i < len; i++) {
         userProblemList.value[i] = { isSelet: false, data: userProblemList.value[i] }
       }
-      console.log(userProblemList.value);
 
     } catch (error) {
       ElMessage.error('获取题库失败！')
@@ -288,7 +290,7 @@ export const getCheckedStore = defineStore('getChecked', () => {
     console.log(userProblemList.value);
   }
 
-  // 获取用户的题集列表,并且获取题集
+  // 获取用户的题集列表,并且获取题集（个人题库的右侧题集，与左侧试题集没有关系）
   const getUserProblemSetList = async () => {
     const res = await getProblemSetList()
     problemSetList.value = res.data.data

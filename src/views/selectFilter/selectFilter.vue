@@ -196,7 +196,7 @@ onMounted(() => {
     </div>
 
     <div class="content">
-      <img src="../../assets/subject.svg" style="width: 1.62vw; height: 2.78vh" />
+      <img src="../../assets/subject.svg" style="width: 1.92vw; height: 3vh" />
       <el-select
         v-model="value3"
         @change="getTopChecked.getSubject(value3)"
@@ -467,7 +467,7 @@ onMounted(() => {
   height: 100%;
   border-radius: 1vw 1vw 1vw 1vw;
   flex: 1;
-  overflow: auto;
+  // overflow: auto;
 }
 .dragImg {
 position:absolute;
