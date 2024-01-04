@@ -19,7 +19,6 @@ const rules2 = {
 // 考核范围
 const rangeData = ref([]);
 const formRef = ref();
-const ProblemTypeData = ref();
 const rules = {
   question: [{ required: true, message: "请选择题目类型", trigger: "change" }],
   difficulty: [{ required: true, message: "请选择难度", trigger: "change" }],
@@ -40,18 +39,31 @@ const getCheckedL = async () => {
   );
 };
 
+const labelMap = new Map()
 const getSubject = async () => {
-  const res = await getProblemType("English"); //目前只有英语选项，等后面有其他学科了再获取subject值
+  // const res = await getProblemType("English"); //目前只有英语选项，等后面有其他学科了再获取subject值
   const res1 = await getTopInfo("range");
-  // console.log(res1.data.data);
+  // console.log(res.data.data);
   rangeData.value = res1.data.data;
-  ProblemTypeData.value = res.data.data;
-  // console.log(ProblemTypeData.value);
+/*   for(let i in rangeData.value){
+    labelMap.set(rangeData.value[i].value,rangeData.value[i].label)
+  }
+  console.log('map',labelMap) */
+
+  // getRightChecked.initSubject(res.data.data)
 };
+
+
 const handleHidden = () => {
   emit("hiddenEvent");
 };
-onMounted(() => getSubject());
+onMounted(
+  () =>{
+    getSubject(),
+    getRightChecked.initSubject()
+  } 
+  );
+
 </script>
 
 <template>
@@ -75,7 +87,7 @@ onMounted(() => getSubject());
       <el-form-item prop="question" label="题型类型：">
         <el-radio-group v-model="form.question">
           <!-- {{ item.genre }} -->
-          <el-radio v-for="item in ProblemTypeData" :key="item.value" :label="item.genre">
+          <el-radio v-for="item in getRightChecked.ProblemTypeData" :key="item.value" :label="item.genre">
             <el-popover
               placement="bottom"
               trigger="click"
@@ -101,8 +113,9 @@ onMounted(() => getSubject());
       </el-form-item>
       <el-form-item prop="difficulty" label="难度选择：">
         <el-radio-group v-model="form.difficulty">
-          <el-radio-group label="0">不限</el-radio-group>
-          <el-radio label="1">容易</el-radio>
+          <el-radio label="0">不限</el-radio>
+          <el-radio label="1">容易</el-radio> 
+          <!-- <el-radio :label="容易" :value="1">容易</el-radio> -->
           <el-radio label="2">较易</el-radio>
           <el-radio label="3">适中</el-radio>
           <el-radio label="4">较难</el-radio>

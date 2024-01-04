@@ -456,7 +456,7 @@ watch(isForget, () =>{
   </div>
 </template>
 
-<style lang="scss" >
+<style lang="scss">
 .login-page {
   height: 79.63vh;
   width:38.60vw;

@@ -37,8 +37,8 @@ const goToPersonalTopic = ()=>{
 </template>
 <style lang="scss">
 body{
-    // background-image: url(../../assets/selectP.jpg);
-    background-image: url("../../assets/Group 2876.svg");
+     background-image: url(../../assets/selectP.jpg);
+    // background-image: url("../../assets/Group 2876.svg");
     background-size: cover;
 }
 div.title{

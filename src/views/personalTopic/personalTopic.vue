@@ -4,6 +4,7 @@ import LeftTopic from "../../components/LeftTopic.vue";
 import Problems from "../../components/Problems.vue";
 import ProblemsTest from "../../components/ProblemsTest.vue";
 import { getCheckedStore } from "@/stores";
+
 const problemsHandle = getCheckedStore();
 // 切换页面
 const isShow = ref("problems");

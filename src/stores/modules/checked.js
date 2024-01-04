@@ -2,16 +2,18 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getCreate, getGeneration, getProblem, generateCancel, getProblemVO, reGenerate, addUserProblem, getUserProblemList, getProblemSetList, searchUserProblems, getUserProblemSet, printUserProblemSet } from '@/api/selectFilter.js'
-
+import { getProblemType } from "../../api/selectFilter";
 export const getCheckedStore = defineStore('getChecked', () => {
   const checkedArr = ref([])//左侧选中的数组  对应接口参数topicList
   const checkedArr1 = ref([])//右上侧选中的数组
+  const tagArrTop = ref([]) //右上侧选中的数组标签表示
   const checkedArrTotal = ref([])//左侧和右上合并后的总数据
   const problems = ref([])
   const problemsAnalysis = ref([])
   const isShow = ref(true)
   const isLoading = ref(false)
   const dialogVisible = ref(false)
+  const ProblemTypeData = ref([]) //题目类型
   // 所有生成题目的集合，数据结构:
   // [
   //   {
@@ -62,9 +64,70 @@ export const getCheckedStore = defineStore('getChecked', () => {
   const resetChecked = () => {
     checkedArr.value = []
   }
+
+  //右上标签设置(difficulty)
+const mapDiffValue = (label) => {
+  switch (label) {
+    case '0':
+      return '不限';
+    case '1':
+      return '容易';
+    case '2':
+      return '较易';
+    case '3':
+      return '适中';
+    case '4':
+      return '较难';
+    case '5':
+      return '困难';
+    default:
+      return '';
+  }
+}
+//右上标签设置(time)
+const mapTimeValue = (label) => {
+  switch (label) {
+    case 1:
+      return '1~3分钟';
+    case 3:
+      return '3~5分钟';
+    case 5:
+      return '5~10分钟';
+    default:
+      return '';
+  }
+}
+//右上标签设置(scope)
+const mapScopeValue = (label) => {
+  switch (label) {
+    case "MIDTERM":
+      return '期中考核';
+    case "FINAL":
+      return '期末考核';
+    case 'QUIZ':
+      return '课堂检测';
+    case "UNIT_TEST":
+      return '单元测验';
+    case "JUNIOR_SCHOOL_ENTRANCE":
+      return '小升初考试';
+    case "HIGH_SCHOOL_ENTRANCE":
+      return '中考';
+    case "UNIVERSITY_ENTRANCE":
+      return '高考';
+    case "FIRST_SIMULATION":
+      return '一模';
+    case "SECOND_SIMULATION":
+      return '二模';
+    case "THIRD_SIMULATION":
+      return '三模';
+    default:
+      return '';
+  }
+}
+
   //筛选界面右上侧布局的仓库（获得选中的数组）
   //右下需要再搜索按钮设置一个点击事件触发一个函数 
-  const getChecked = async (question, questionType, difficulty, time, scope) => {
+  const getChecked = (question, questionType, difficulty, time, scope) => {
     /*  await refValue.validate()
      checkedArr1.value.push(formValue)
      console.log(checkedArr1.value) */
@@ -82,7 +145,11 @@ export const getCheckedStore = defineStore('getChecked', () => {
     checkedArr1.value[2] = difficulty ? difficulty : null
     checkedArr1.value[3] = time ? time : null
     checkedArr1.value[4] = scope ? scope : null
-    console.log(checkedArr1.value)
+    tagArrTop.value[0] = question? question : null 
+    tagArrTop.value[1] =questionType ? questionType : null 
+    tagArrTop.value[2] = mapDiffValue(difficulty)? mapDiffValue(difficulty):null
+    tagArrTop.value[3] = mapTimeValue(time[0])? mapTimeValue(time[0]):null
+    tagArrTop.value[4] = mapScopeValue(scope) ? mapScopeValue(scope) : null
 
   }
 
@@ -98,11 +165,21 @@ export const getCheckedStore = defineStore('getChecked', () => {
   const getGenre = (genreV) => {//上下册
     checkedTop.value.genre = genreV
   }
-  const getSubject = (subjectV) => {//学科
+  const getSubject = async(subjectV) => {//学科
     checkedTop.value.subject = subjectV
+    // console.log('学科是',subjectV)
+    const res = await getProblemType(subjectV)
+     console.log('题目类型是',res.data.data)
+     ProblemTypeData.value=res.data.data
+
+  }
+  const initSubject = async()=>{ //初始化题目类型，默认是英语
+    const res = await getProblemType("English")
+    ProblemTypeData.value=res.data.data
   }
   const getTextbook = (textbookV) => {//教材版本
     checkedTop.value.textbook = textbookV
+    
   }
   //生成按钮后的弹窗是否显示设置
   const setDialogVisibleFlase = () => {
@@ -257,6 +334,7 @@ export const getCheckedStore = defineStore('getChecked', () => {
       const res = await addUserProblem(id)
       if (res.data.data === '添加成功') {
         ElMessage.success('添加题库成功！')
+        isShow.value = true  //五选一，选择完就跳转到生成界面
       }
     } catch (error) {
       ElMessage.error('添加题库失败！')
@@ -323,6 +401,11 @@ export const getCheckedStore = defineStore('getChecked', () => {
     totalGenerationProblem,
     currentItem,
     dialogVisible,
+    ProblemTypeData,
+    tagArrTop,
+    mapDiffValue,
+    mapTimeValue,
+    mapScopeValue,
     getUserProblemSetList,
     getSearchUserProblems,
     regenerate,
@@ -341,6 +424,7 @@ export const getCheckedStore = defineStore('getChecked', () => {
     addUserProblems,
     getUserProblems,
     setDialogVisibleFlase,
-    resetChecked
+    resetChecked,
+    initSubject
   }
 })

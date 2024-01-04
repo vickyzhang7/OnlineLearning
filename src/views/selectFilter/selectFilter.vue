@@ -142,6 +142,7 @@ const mutiChangeHandle = (generateId) => {
   }
 }
 
+
 onMounted(() => {
   getInfo();
 });

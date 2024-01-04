@@ -157,8 +157,7 @@ let list = [];
 // console.log(generateData.problems[0].options.length);
 const replaceBody = (index, body) => {
   // return index + 1 + "." + body.slice(3);
-  return index + 1 + "." + body;
-  // return index + 1 + "." + body.slice(3);
+  return index + 1 + "." + body; //设置题库的试题集渲染格式
 
 };
 // 批量处理

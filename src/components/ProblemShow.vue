@@ -40,7 +40,7 @@
             <p v-for="i in item.options" :key="i">{{ i }}</p>
           </div>
           <div class="item-btns">
-            <el-button text class="btn1">纠错</el-button>
+            <el-button text class="btn1">纠错</el-button> 
             <el-button text class="btn2" @click="addDataBase(item.problemId)"
               >加入题库</el-button
             >
@@ -91,6 +91,8 @@ const cancleHandle = () => {
 // 将题目添加至题库
 const addDataBase = (id) => {
   generateData.addUserProblems(id);
+  
+
 };
 </script>
 

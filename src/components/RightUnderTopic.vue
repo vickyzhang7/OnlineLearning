@@ -1,6 +1,7 @@
 <template>
   <slot>
     <div style="margin-top: 10.7vh; text-align: center">
+      <!-- 左侧选择框获得的数据 -->
       <el-tag
         v-for="tag in getRightUnderChecked.checkedArr"
         :key="tag"
@@ -12,15 +13,16 @@
       >
         {{ tag }}
       </el-tag>
+      <!-- 右上基础筛选 -->
       <el-tag
-        v-for="tag in getRightUnderChecked.checkedArr1"
+        v-for="tag in getRightUnderChecked.tagArrTop"
         :key="tag"
         class="mx-1 tagStyle"
         closable
         :disable-transitions="false"
         @close="getRightUnderChecked.handleClose1(tag)"
         type="info"
-      >
+      > 
         {{ tag }}
       </el-tag>
     </div>
@@ -93,13 +95,14 @@
 import { getCheckedStore } from "@/stores";
 import { ref } from "vue";
 import mitter from '@/utils/eventBus'
-
+import { onMounted } from "vue";
 const getRightUnderChecked = getCheckedStore();
 const step = ref(5); //进度条
 let timer = ref(0);
 const loaddingBar = ref();
 const input2 = ref();
 const isShow = ref(true);
+
 const generateHandle = () => {
   if (!getRightUnderChecked.isLoading) {
     getRightUnderChecked.isLarge = true;
@@ -137,6 +140,18 @@ const startLoading = () => {
 };
 mitter.on('progress', startLoading()) //兄弟传值
 
+
+
+// const res = mapDiffValue(getRightUnderChecked.checkedArr1[3])
+/* setInterval(()=>
+{
+  console.log('输出的值',getRightUnderChecked.checkedArr1[2])
+  const diff = mapDiffValue(getRightUnderChecked.checkedArr1[2])
+  console.log('难度标签是',diff)
+  const time = mapTimeValue(getRightUnderChecked.checkedArr1[3])
+  
+}
+,1000) */
 </script>
 
 <style lang="scss">
