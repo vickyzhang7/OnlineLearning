@@ -40,10 +40,12 @@
             <p v-for="i in item.options" :key="i">{{ i }}</p>
           </div>
           <div class="item-btns">
-            <el-button text class="btn1">纠错</el-button> 
-            <el-button text class="btn2" @click="addDataBase(item.problemId)"
-              >加入题库</el-button
-            >
+            <el-button text class="btn1" @click="findError()">纠错</el-button> 
+            <el-button text class="btn2" @click="addDataBase(item.problemId)">加入题库</el-button>
+          </div>
+          <div class="item-btns1" v-show='isError'>
+            <el-button text class="btn11">取消</el-button> 
+            <el-button text class="btn21">确认</el-button>
           </div>
         </div>
       </div>
@@ -71,6 +73,7 @@ import mitter from '@/utils/eventBus'
 const generateData = getCheckedStore();
 const numToString = ["一", "二", "三", "四", "五"];
 const tip = ref(true)
+const isError=ref(false) //点击纠错按钮时候为true
 const replaceBody = (index, body) => {
   return index + 1 + "." + body;
 };
@@ -91,9 +94,12 @@ const cancleHandle = () => {
 // 将题目添加至题库
 const addDataBase = (id) => {
   generateData.addUserProblems(id);
-  
-
 };
+//纠错
+const findError = (body,options) =>{
+  isError.value = true; //显示纠错按钮对应的确认按钮和取消按钮
+  
+}
 </script>
 
 <style lang="scss" scoped>
@@ -124,14 +130,29 @@ const addDataBase = (id) => {
     .problem-p {
       width: 100%;
     }
-    &:hover {
+    &:hover {//鼠标悬浮到这个题的时候，才会显示
       border: 1px solid #6666f6;
-      background-color: #e6eafc;
+      background-color: rgba(102, 102, 255, 0.1);
       .item-btns {
         display: block;
+        .btn1{
+        color: #6666f6;
+        }
+        .btn2{
+        color: #6666f6;
+        }
+      }
+      .item-btns1{
+        display: block;
+        .btn11{
+        color: #6666f6;
+        }
+        .btn21{
+        color: #6666f6;
+        }
       }
     }
-    .item-btns {
+    .item-btns {//当没有对准某个题时候，不显示这些按钮
       position: absolute;
       right: 0vw;
       top: -2.3vh;
@@ -141,13 +162,44 @@ const addDataBase = (id) => {
         height: 1.835vh;
         border-radius: 0;
       }
+      .btn1:hover{
+        background-color: #6666f6;
+        color: #fff;
+      }
       .btn2 {
         padding: 0;
         font-size: 0.835vw;
-        background-color: #6666f6;
-        color: #fff;
         height: 1.835vh;
         border-radius: 0;
+      }
+      .btn2:hover{
+        background-color: #6666f6;
+        color: #fff;
+      }
+    }
+    .item-btns1 {
+      position: absolute;
+      right: 0vw;
+      bottom: 0vh;
+      display: none;
+      .btn11 {
+        font-size: 0.835vw;
+        height: 1.835vh;
+        border-radius: 0;
+      }
+      .btn11:hover{
+        background-color: #6666f6;
+        color: #fff;
+      }
+      .btn21 {
+        padding: 0;
+        font-size: 0.835vw;
+        height: 1.835vh;
+        border-radius: 0;
+      }
+      .btn21:hover{
+        background-color: #6666f6;
+        color: #fff;
       }
     }
   }

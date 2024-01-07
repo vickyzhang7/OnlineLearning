@@ -109,7 +109,7 @@ const handleTop = () => {
 };
 // +号按钮操作
 const changePage = () => {
-  isChangePageShow.value = !isChangePageShow.value;
+  isChangePageShow.value = !isChangePageShow.value; //是否显示菜单
 };
 
 // 只有一个的处理
@@ -227,7 +227,7 @@ onMounted(() => {
           :value="item.value"
       /></el-select>
     </div>
-
+    <!-- 加号按钮 -->
     <div class="addButton">
       <img
         @click="changePage"
@@ -239,6 +239,7 @@ onMounted(() => {
         <img src="../../assets/addLargeButton.svg" style="width: 5.2vw; height: 9.2vh" />
       </div>
     <div>
+      <!-- 加号按钮点击后的菜单：仅有当前生成界面 -->
         <div
           class="first-show"
           v-show="isChangePageShow && getTopChecked.totalGenerationProblem.length === 1"
@@ -246,8 +247,9 @@ onMounted(() => {
           <p class="first-show-item active" @click.stop="changeHandle('')">
             {{ getTopChecked.totalGenerationProblem[0]?.title }}
           </p>
-          <p class="first-show-item" @click.stop="changeHandle('add')">新增生成页面</p>
-        </div>
+          <p class="first-show-item" @click.stop="changeHandle('add')">新增生成页面</p>  
+        </div>  
+      <!-- 加号按钮点击后的菜单：有多个生成界面 -->
         <div
           class="else-show"
           v-show="isChangePageShow && getTopChecked.totalGenerationProblem.length > 1"
@@ -321,11 +323,17 @@ onMounted(() => {
             <el-icon style="margin-left: 0.42vw"><CaretLeft /></el-icon>
           </div>
           <div style="font-weight: 600; margin-left: 0.2vw">生成题目</div>
+          <!-- 右下模块的切换按钮 -->
           <div>
             <img
-              src="../../assets/switch.svg"
+              src="../../assets/beforeSwitch.svg"
+              @click="changePage"
+               v-show="!getTopChecked.isLoading"
               style="position: absolute; right: 1vw; top: 1vh"
             />
+            <div class="addLarge" v-show="getTopChecked.isLoading" @click="changePage">
+              <img src="../../assets/switch.svg" style="position: absolute; right: 1vw; top: 1vh"/>
+            </div>
           </div>
         </div>
         <right-under-topic v-if="getTopChecked.isShow"></right-under-topic>
