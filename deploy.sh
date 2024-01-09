@@ -3,10 +3,10 @@
 # Configuration
 LOCAL_FOLDER="./dist"
 DEPLOY_NAME="edu"
-REMOTE_USER="zhaoh"
-REMOTE_HOST="103.231.255.140"
-TEMP_FOLDER="/home/zhaoh/code"
-REMOTE_FOLDER="/usr/local/html"
+REMOTE_USER="mahy"
+REMOTE_HOST="103.230.14.162"
+TEMP_FOLDER="/home/mahy/code"
+REMOTE_FOLDER="/var/www/html"
 
 npm install
 npm run build

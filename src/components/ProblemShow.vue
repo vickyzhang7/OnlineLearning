@@ -22,30 +22,35 @@
             </svg>
             生成结果{{ numToString[index] }}</span
           >
-          <p class="problem-p">{{ replaceBody(index, item.body) }}</p>
+          <!-- 问题 -->
+          <p class="problem-p" :id="'pQuestion' + index">{{ replaceBody(index, item.body) }}</p>
+          <!-- 选项情况1:有1234问题类型➕abcd选项 -->
           <div
             class="subProblem"
             v-if="
               item.subProblemList
             "
           >
-            <div v-for="(subItem, subIndex) in item.subProblemList">
-              <p class="problem-p">{{ subItem.body }}</p>
+            <div v-for="(subItem, subIndex) in item.subProblemList" :key="subIndex">
+              <!-- 1234选项问题 -->
+              <p class="problem-p" :id="'pSelect' + index + subIndex" >{{ subItem.body }}</p>
+              <!-- abcd选项 -->
               <div class="optionsCon">
-                <p v-for="i in subItem.options" :key="i">{{ i }}</p>
+                <p v-for="(optsubItem,optsubIndex) in subItem.options" :key="optsubIndex" :id="'pSelect' + index + subIndex + optsubIndex">{{ optsubItem }}</p>
               </div>
             </div>
           </div>
-          <div class="optionsCon" v-else>
-            <p v-for="i in item.options" :key="i">{{ i }}</p>
+          <!-- 选项情况2:仅有abcd选项 -->
+          <div class="optionsCon" v-else>  
+            <p v-for="(optItem,optIndex) in item.options" :key="optIndex" :id="'pSelect' + index + '_' + optIndex">{{ optItem }}</p>
           </div>
           <div class="item-btns">
-            <el-button text class="btn1" @click="findError()">纠错</el-button> 
+            <el-button text class="btn1" @click="findError(index,item.subProblemList,item.options)">纠错</el-button> 
             <el-button text class="btn2" @click="addDataBase(item.problemId)">加入题库</el-button>
           </div>
           <div class="item-btns1" v-show='isError'>
-            <el-button text class="btn11">取消</el-button> 
-            <el-button text class="btn21">确认</el-button>
+            <el-button text class="btn11" @click="cancel(index)">取消</el-button> 
+            <el-button text class="btn21" @click="confirm(index)">确认</el-button>
           </div>
         </div>
       </div>
@@ -77,6 +82,8 @@ const isError=ref(false) //点击纠错按钮时候为true
 const replaceBody = (index, body) => {
   return index + 1 + "." + body;
 };
+
+const editableIndexes = ref([]);
 const emit = defineEmits();
 const reGenerateHandle = () => {
   generateData.regenerate();
@@ -89,16 +96,102 @@ const cancleHandle = () => {
   generateData.isShow = !generateData.isShow;
   generateData.totalGenerationProblem.splice(currentItem, 1);
   generateData.currentItem = 0;
-  console.log(generateData.totalGenerationProblem);
+  // console.log(generateData.totalGenerationProblem);
 };
 // 将题目添加至题库
 const addDataBase = (id) => {
   generateData.addUserProblems(id);
 };
-//纠错
-const findError = (body,options) =>{
+//纠错（1.显示确认取消按钮 2.实现可编辑）
+const findError = (index,List,option) =>{//index:索引，List:选项分为1234和对应的abcd选项，option：选项只有abcd
   isError.value = true; //显示纠错按钮对应的确认按钮和取消按钮
   
+  document.getElementById('pQuestion' + index).contentEditable = true; //大问题选项设为可编辑
+
+  if(List){//当情况为1234和对应abcd时
+    for (let subIndex = 0; subIndex < List.length; subIndex++) {
+    const pElement = document.getElementById('pSelect' + index + subIndex);
+    pElement.contentEditable = true  //1234那些问题选项设为可编辑
+    //嵌套for循环，因为每个1234小问题中又有abcd选项
+    const optionss = ['A', 'B', 'C', 'D'];
+        for (let i = 0; i < optionss.length; i++) {
+            const osElement = document.getElementById('pSelect' + index + subIndex + i);
+            console.log('细分abcd',osElement);
+            osElement.contentEditable = true //1234小问题中的abcd选项设为可编辑
+        } 
+    }
+  }else if(option){//当情况为仅有abcd时
+    for (let opt = 0; opt < option.length; opt++) {
+      const oElement = document.getElementById('pSelect' + index + '_' + opt);
+      oElement.contentEditable = true //仅有abcd选项设为可编辑
+    }
+  }else{
+    console.log('都不对')
+    return
+  }
+};
+ 
+//取消（1.隐藏确认取消按钮2.将所有的选项设为不可编辑3.刷新视图）
+const cancel = (index) =>{
+  //1.
+  isError.value = false;
+  //2.
+  document.getElementById('pQuestion' + index).contentEditable = false;//将题目和abcd选项设置为不可编辑状态
+  if(List){//当情况为1234和对应abcd时
+    for (let subIndex = 0; subIndex < List.length; subIndex++) {
+    const pElement = document.getElementById('pSelect' + index + subIndex);
+    pElement.contentEditable = false  //1234那些问题选项设为可编辑
+    //嵌套for循环，因为每个1234小问题中又有abcd选项
+    const optionss = ['A', 'B', 'C', 'D'];
+        for (let i = 0; i < optionss.length; i++) {
+            const osElement = document.getElementById('pSelect' + index + subIndex + i);
+            console.log('细分abcd',osElement);
+            osElement.contentEditable = false //1234小问题中的abcd选项设为可编辑
+        } 
+    }
+  }else if(option){//当情况为仅有abcd时
+    for (let opt = 0; opt < option.length; opt++) {
+      const oElement = document.getElementById('pSelect' + index + '_' + opt);
+      oElement.contentEditable = false //仅有abcd选项设为可编辑
+    }
+  }else{
+    console.log('都不对')
+    return
+  }
+  //3.
+
+}
+
+//确认（1.隐藏确认取消按钮2.将所有的选项设为不可编辑3.向后端发送修改数据的请求4.更新试图）
+const confirm = (index) =>{
+  //1.
+  isError.value = false;
+  document.getElementById('pQuestion' + index).contentEditable = false;
+  //2.
+  document.getElementById('pQuestion' + index).contentEditable = false;//将题目和abcd选项设置为不可编辑状态
+  if(List){//当情况为1234和对应abcd时
+    for (let subIndex = 0; subIndex < List.length; subIndex++) {
+    const pElement = document.getElementById('pSelect' + index + subIndex);
+    pElement.contentEditable = false  //1234那些问题选项设为可编辑
+    //嵌套for循环，因为每个1234小问题中又有abcd选项
+    const optionss = ['A', 'B', 'C', 'D'];
+        for (let i = 0; i < optionss.length; i++) {
+            const osElement = document.getElementById('pSelect' + index + subIndex + i);
+            console.log('细分abcd',osElement);
+            osElement.contentEditable = false //1234小问题中的abcd选项设为可编辑
+        } 
+    }
+  }else if(option){//当情况为仅有abcd时
+    for (let opt = 0; opt < option.length; opt++) {
+      const oElement = document.getElementById('pSelect' + index + '_' + opt);
+      oElement.contentEditable = false //仅有abcd选项设为可编辑
+    }
+  }else{
+    console.log('都不对')
+    return
+  }
+  //3.向后端发起请求，修改ID数组内容，需要传参数，ID为参数
+  //4.刷新视图数据，实现双向绑定
 }
 </script>
 
@@ -155,7 +248,7 @@ const findError = (body,options) =>{
     .item-btns {//当没有对准某个题时候，不显示这些按钮
       position: absolute;
       right: 0vw;
-      top: -2.3vh;
+      top: -2.2vh;
       display: none;
       .btn1 {
         font-size: 0.835vw;

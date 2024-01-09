@@ -3,7 +3,7 @@ import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 // 服务器
-const baseURL = 'http://103.231.255.140:8182' 
+const baseURL = 'http://103.230.14.162:8182'
 // const baseURL = 'http://2733e50a.r10.cpolar.top' 
 
 const instance = axios.create({
