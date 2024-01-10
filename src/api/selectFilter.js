@@ -48,6 +48,18 @@ export const reGenerate = (generationId) =>
             'Content-Type': 'application/json'
         }
     })
+// 根据id获取题目信息
+export const getInformation = (problemId) =>
+request.post('/problem/get/'+ problemId,{
+    headers: {
+        'Content-Type': 'application/json'
+    }})
+// 根据id修改题目
+export const reSetProblem = (body,problemId) =>
+    request.post('/problem/update/'+ problemId,body, {
+        headers: {
+            'Content-Type': 'application/json'
+        }})
 
 // 根据id将用户选择的题目加入题库
 export const addUserProblem = (generationId) =>
