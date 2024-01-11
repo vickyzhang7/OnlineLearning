@@ -56,7 +56,7 @@ request.post('/problem/get/'+ problemId,{
     }})
 // 根据id修改题目
 export const reSetProblem = (body,problemId) =>
-    request.post('/problem/update/'+ problemId,body, {
+    request.put('/problem/update/'+ problemId,body, {
         headers: {
             'Content-Type': 'application/json'
         }})

@@ -49,7 +49,7 @@
             <el-button text class="btn2" @click="addDataBase(item.problemId)">加入题库</el-button>
           </div>
           <div class="item-btns1" v-show='isError'>
-            <el-button text class="btn11" @click="cancel(index,item.subProblemList,item.options)">取消</el-button> 
+            <el-button text class="btn11" @click="cancel(index,item.subProblemList,item.options,item.problemId)">取消</el-button> 
             <el-button text class="btn21" @click="confirm(index,item.subProblemList,item.options,item.problemId)">确认</el-button>
           </div>
         </div>
@@ -72,9 +72,11 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus'
 import { getCheckedStore } from "@/stores";
 import { ref } from "vue";
 import mitter from '@/utils/eventBus'
+import { reSetProblem } from "@/api/selectFilter";
 const generateData = getCheckedStore();
 const numToString = ["一", "二", "三", "四", "五"];
 const tip = ref(true)
@@ -83,10 +85,15 @@ const replaceBody = (index, body) => {
   return index + 1 + "." + body;
 };
 
-const originalp1 = ref("")
+const originalp1 = ref("")//原始题文本内容
 const originalp2 = ref([])
 const originalp3 = ref([])
 const originalp4 = ref([])
+const body = ref("")//修改后的文本内容累加，用于传递给后端
+const bodyP1 = ref("")//修改后的题文本内容
+const bodyP2 = ref([])
+const bodyP3 = ref([])
+const bodyP4 = ref([])
 const editableIndexes = ref([]);
 const emit = defineEmits();
 const reGenerateHandle = () => {
@@ -105,6 +112,7 @@ const cancleHandle = () => {
 // 将题目添加至题库
 const addDataBase = (id) => {
   generateData.addUserProblems(id);
+  
 };
 //纠错的编辑功能
 const judgeTopic = (index,List,option,judge) =>{//judge为true时：可编辑。judge为false：不可编辑
@@ -167,7 +175,7 @@ const findError = (index,List,option) =>{//index:索引，List:选项分为1234�
 };
  
 //取消（1.隐藏确认取消按钮2.将所有的选项设为不可编辑3.刷新视图）
-const cancel = (index,List,option) =>{
+const cancel = (index,List,option,id) =>{
     //1.
     isError.value = false;
     //2.
@@ -189,10 +197,11 @@ const cancel = (index,List,option) =>{
     }
     if(option){//当情况为仅有abcd时
       for (let opt = 0; opt < option.length; opt++) {
-        console.log('111',opt,originalp4.value[opt])
+        // console.log('111',opt,originalp4.value[opt])
         document.getElementById('pSelect' + index + '_' + opt).innerText = originalp4.value[opt] //仅有abcd选项
       }
     }
+   
   
 }
 
@@ -205,15 +214,41 @@ const confirm = async(index,List,option,problemId) =>{
   judgeTopic(index,List,option,false)
   //3.向后端发起请求，修改ID数组内容，需要传参数，ID为参数
     //获取body信息
-    const body = 'Problem: '//累加
+    
+    bodyP1.value = document.getElementById('pQuestion' + index).innerText
+    body.value = bodyP1.value + '\n'
 
+    if(List){//当情况为1234和对应abcd时
+      for (let subIndex = 0; subIndex < List.length; subIndex++) {
+      bodyP2.value[subIndex] = document.getElementById('pSelect' + index + subIndex).innerText   //1234那些问题选项原始内容
+      body.value = body.value + bodyP2.value[subIndex]+'\n' //累加
+        if(List[subIndex].options){
+          //嵌套for循环，因为每个1234小问题中又有abcd选项
+            for (let i = 0; i < List[subIndex].options.length; i++) {
+                bodyP3.value[i]= document.getElementById('pSelect' + index + subIndex + i).innerText  //1234小问题中的abcd选项内容
+                body.value = body.value + bodyP3.value[i]
+            } 
+            
+        }
+        
+      }
+    }
+    if(option){//当情况为仅有abcd时
+      for (let opt = 0; opt < option.length; opt++) {
+        // console.log('111',opt,originalp4.value[opt])
+        bodyP4.value[opt] =document.getElementById('pSelect' + index + '_' + opt).innerText//仅有abcd选项
+        body.value = body.value + bodyP4.value[opt]
+      }
+      
+    }
+    
     //发送请求
-    const res = await reSetProblem(body,problemId)
-    console.log(res)
+    const res = await reSetProblem(body.value,problemId)
+    
   //4.刷新视图数据，实现双向绑定(已自动更新，无需再代码实现)
 
   //5.
-  ElMessage.success('纠错成功')
+  ElMessage.success(`${res.data.data}`)
 }
 </script>
 

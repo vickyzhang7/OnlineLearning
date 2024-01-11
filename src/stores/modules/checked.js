@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getCreate, getGeneration, getProblem, generateCancel, getProblemVO, reGenerate, addUserProblem, getUserProblemList, getProblemSetList, searchUserProblems, getUserProblemSet, printUserProblemSet } from '@/api/selectFilter.js'
 import { getProblemType } from "../../api/selectFilter";
+
 export const getCheckedStore = defineStore('getChecked', () => {
   const checkedArr = ref([])//左侧选中的数组  对应接口参数topicList
   const checkedArr1 = ref([])//右上侧选中的数组
