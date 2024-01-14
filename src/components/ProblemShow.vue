@@ -89,7 +89,7 @@ const originalp1 = ref("")//原始题文本内容
 const originalp2 = ref([])
 const originalp3 = ref([])
 const originalp4 = ref([])
-const body = ref("")//修改后的文本内容累加，用于传递给后端
+const bodyP = ref("")//修改后的文本内容累加，用于传递给后端
 const bodyP1 = ref("")//修改后的题文本内容
 const bodyP2 = ref([])
 const bodyP3 = ref([])
@@ -171,7 +171,6 @@ const findError = (index,List,option) =>{//index:索引，List:选项分为1234�
   getText(index,List,option)
   //3.编辑功能
   judgeTopic(index,List,option,true)
-  
 };
  
 //取消（1.隐藏确认取消按钮2.将所有的选项设为不可编辑3.刷新视图）
@@ -215,18 +214,18 @@ const confirm = async(index,List,option,problemId) =>{
   //3.向后端发起请求，修改ID数组内容，需要传参数，ID为参数
     //获取body信息
     
-    bodyP1.value = document.getElementById('pQuestion' + index).innerText
-    body.value = bodyP1.value + '\n'
+    bodyP1.value = document.getElementById('pQuestion' + index).innerText.slice(2)
+    bodyP.value = bodyP1.value
 
     if(List){//当情况为1234和对应abcd时
       for (let subIndex = 0; subIndex < List.length; subIndex++) {
       bodyP2.value[subIndex] = document.getElementById('pSelect' + index + subIndex).innerText   //1234那些问题选项原始内容
-      body.value = body.value + bodyP2.value[subIndex]+'\n' //累加
+      bodyP.value = bodyP.value + bodyP2.value[subIndex]+'\n' //累加
         if(List[subIndex].options){
           //嵌套for循环，因为每个1234小问题中又有abcd选项
             for (let i = 0; i < List[subIndex].options.length; i++) {
                 bodyP3.value[i]= document.getElementById('pSelect' + index + subIndex + i).innerText  //1234小问题中的abcd选项内容
-                body.value = body.value + bodyP3.value[i]
+                bodyP.value = bodyP.value + bodyP3.value[i]
             } 
             
         }
@@ -237,16 +236,36 @@ const confirm = async(index,List,option,problemId) =>{
       for (let opt = 0; opt < option.length; opt++) {
         // console.log('111',opt,originalp4.value[opt])
         bodyP4.value[opt] =document.getElementById('pSelect' + index + '_' + opt).innerText//仅有abcd选项
-        body.value = body.value + bodyP4.value[opt]
+        bodyP.value = bodyP.value + bodyP4.value[opt]
       }
       
     }
-    
+    const body = bodyP.value.replace(/\\"/g, '') //纠错后加入题库的格式，没有起到效果，依然存在引号
+    console.log('body是',body)
     //发送请求
-    const res = await reSetProblem(body.value,problemId)
-    
-  //4.刷新视图数据，实现双向绑定(已自动更新，无需再代码实现)
-
+    const res = await reSetProblem(body,problemId)
+    console.log('res:',res)
+  //4.刷新视图数据，实现双向绑定
+  document.getElementById('pQuestion' + index).innerText = index + 1 + "." + bodyP1.value
+    if(List){//当情况为1234和对应abcd时
+      for (let subIndex = 0; subIndex < List.length; subIndex++) {
+      document.getElementById('pSelect' + index + subIndex).innerText = bodyP2.value[subIndex]  //1234那些问题选项原始内容
+      
+        if(List[subIndex].options){
+          //嵌套for循环，因为每个1234小问题中又有abcd选项
+            for (let i = 0; i < List[subIndex].options.length; i++) {
+                document.getElementById('pSelect' + index + subIndex + i).innerText = bodyP3.value[i]  //1234小问题中的abcd选项内容
+            } 
+        }
+      }
+      
+    }
+    if(option){//当情况为仅有abcd时
+      for (let opt = 0; opt < option.length; opt++) {
+        // console.log('111',opt,originalp4.value[opt])
+        document.getElementById('pSelect' + index + '_' + opt).innerText = bodyP4.value[opt] //仅有abcd选项
+      }
+    }
   //5.
   ElMessage.success(`${res.data.data}`)
 }

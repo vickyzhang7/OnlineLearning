@@ -12,6 +12,7 @@ export const getCheckedStore = defineStore('getChecked', () => {
   const problems = ref([])
   const problemsAnalysis = ref([])
   const isShow = ref(true)
+  const isBagProblemSet = ref(false) //显示袋子题库
   const isLoading = ref(false)
   const dialogVisible = ref(false)
   const ProblemTypeData = ref([]) //题目类型
@@ -305,8 +306,10 @@ const mapScopeValue = (label) => {
 
             const problem = await getProblemVO(totalGenerationProblem.value[currentItem.value].generateId)
             const analysis = await getProblem(totalGenerationProblem.value[currentItem.value].generateId)
-            problems.value = problem.data.data
-            problemsAnalysis.value = analysis.data.data
+            /* problems.value = problem.data.data
+            problemsAnalysis.value = analysis.data.data */
+            totalGenerationProblem.value[currentItem.value].dataVO = problem.data.data
+            totalGenerationProblem.value[currentItem.value].dataAnalysis = analysis.data.data
             isLoading.value = false
             isShow.value = false
           } else if (r.data.data === 'FAILED') {
@@ -334,8 +337,9 @@ const mapScopeValue = (label) => {
     try {
       const res = await addUserProblem(id)
       if (res.data.data === '添加成功') {
+        
+        // isShow.value = true  //五选一，选择完就跳转到生成界面
         ElMessage.success('添加题库成功！')
-        isShow.value = true  //五选一，选择完就跳转到生成界面
       }
     } catch (error) {
       ElMessage.error('添加题库失败！')
@@ -346,6 +350,7 @@ const mapScopeValue = (label) => {
   const getUserProblems = async () => {
     try {
       const res = await getUserProblemList()
+      // console.log('用户题集:',res)
       userProblemList.value = res.data.data
       // 处理数据，将数据改为 [{isSelet: false, data: xxx}, {isSelet: false, data: xxx},...]
       let len = userProblemList.value.length
@@ -378,12 +383,17 @@ const mapScopeValue = (label) => {
       // console.log(item);
       const r = await getUserProblemSet(item.seqNum)
       problemSet.value.push(r.data.data)
-      console.log('用户题集', r.data);
+      // console.log('用户题集', r.data);
     })
-    console.log('用户的题集列表:', problemSetList.value);
-    console.log('用户题集:', problemSet.value);
+    // console.log('用户的题集列表:', problemSetList.value);
+    // console.log('用户题集:', problemSet.value);
   }
+  const handelBag = ()=>{
+    // if(totalGenerationProblem.length)  等做完再加上
+      isBagProblemSet.value = !isBagProblemSet.value  //显示袋子题库
 
+    
+  }
 
 
   return {
@@ -394,6 +404,7 @@ const mapScopeValue = (label) => {
     problems,
     problemsAnalysis,
     isShow,
+    isBagProblemSet,
     isLoading,
     userProblemList,
     problemSetList,
@@ -426,6 +437,7 @@ const mapScopeValue = (label) => {
     getUserProblems,
     setDialogVisibleFlase,
     resetChecked,
-    initSubject
+    initSubject,
+    handelBag
   }
 })

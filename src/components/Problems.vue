@@ -199,7 +199,7 @@ const textEncapsulation = () => {
 
 // 获取用户题集列表
 const getList = () => {
-  generateData.getUserProblemSetList(); //个人题库模块的右侧信息获取，与左侧试题集无关
+  generateData.getUserProblems(); //个人题库模块的右侧信息获取，与左侧试题集无关
 };
 
 // 打开添加用户题集

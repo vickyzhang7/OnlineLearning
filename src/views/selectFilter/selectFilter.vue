@@ -6,6 +6,7 @@ import RightUnderTopic from "../../components/RightUnderTopic.vue";
 import ProblemShow from "../../components/ProblemShow.vue";
 import { getCheckedStore } from "@/stores";
 import { getTopInfo } from "../../api/selectFilter";
+import BagProblemSet from "../../components/BagProblemSet.vue";
 
 const value = ref("");
 const value1 = ref("");
@@ -106,6 +107,7 @@ const handleTop = () => {
   // console.log(underLeft.value.style);
   rightTop.value.style.height = 0;
   rightTop.value.style.overflow = "hidden";
+  rightTop.value.style.margin=0;
 };
 // +号按钮操作
 const changePage = () => {
@@ -270,37 +272,7 @@ onMounted(() => {
   </div>
   <div class="under">
     <div class="underLeft" ref="underLeft">
-      <!-- <div
-        style="
-          margin-top: 1vh;
-          display: flex;
-          align-items: center;
-          line-height: 1.1vh;
-          font-size: 0.9vw;
-        "
-      >
-        <div>
-          <el-icon @click="handleLeft" style="margin-left: 0.42vw"><CaretLeft /></el-icon>
-        </div>
-        <div style="font-weight: 600; margin-left: 0.2vw">生成参考</div>
-        <div style="margin-left: 4.4vw; color: #979797" @click="getTopChecked.resetChecked()">重置</div>
-      </div>
-      <div
-        style="
-          display: flex;
-          margin-left: 1.52vw;
-          margin-top: 1vh;
-          margin-bottom: 1vh;
-          font-weight: 600;
-          font-size: 0.9vw;
-        "
-      >
-        <div style="margin-right: 0.8vw; color: #6666ff" @click="isKnowledge" id="know">
-          知识点生成
-        </div>
-        |
-        <div style="margin-left: 0.9vw" id="text" @click="isText">教材生成</div>
-      </div> -->
+     
       <left-topic @hiddenEventL = "handleLeft"></left-topic>
       <!-- 插槽 -->
     </div>
@@ -342,15 +314,26 @@ onMounted(() => {
         <!-- <el-button @click="change">ff</el-button> -->
       </div>
       <!-- 锁购物袋设计：拖拽悬浮 -->
-      <img
+      <div style="position: absolute;display: inline-block;right: 0;" draggable='true' @click="getTopChecked.handelBag()">
+         <img
           class="dragImg"
-          draggable='true'
-          src="../../assets/lockbag.svg"
+          src="../../assets/usebag.svg"
           alt=""
       />
-
+      <!-- 购物袋小红点 -->
+      <div
+						v-show="getTopChecked.totalGenerationProblem.length"
+						class="fz"
+						:class="[getTopChecked.totalGenerationProblem.length > 9 ? 'rectangle' : 'circle']"
+					>
+						{{ getTopChecked.totalGenerationProblem.length }}
+      </div>
+      </div>
+       
     </div>
   </div>
+  <!-- 袋子题库 -->
+  <bag-problem-set  v-show="getTopChecked.isBagProblemSet"></bag-problem-set>  
 </template>
 <style lang="scss">
 .selectAll {
@@ -467,21 +450,42 @@ onMounted(() => {
   // width: 82.29vw;
   height: 23%;
   border-radius: 1vw 1vw 1vw 1vw;
+  margin-bottom: 1.77vh;
+  overflow: scroll;
 }
 .underRight2 {
   position: relative;
   background-color: rgba(255, 255, 255, 0.5);
-  margin-top: 1.77vh;
+  // margin-top: 1.77vh;
   // width: 82.29vw;
   height: 100%;
   border-radius: 1vw 1vw 1vw 1vw;
   flex: 1;
   // overflow: auto;
+  
 }
 .dragImg {
 position:absolute;
 right:0;
 }
+.fz {
+    position: relative;
+    display: inline-block;
+      right: 19px;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      text-align: center;
+      color: #FFFFFF;
+      background: #FE3A46;
+        &.rectangle {
+            padding: 8px;
+            border-radius: 16px;
+            }
+        &.circle {
+            border-radius: 50%;
+            }
+    }
 }
 }
 body{

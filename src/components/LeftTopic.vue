@@ -10,7 +10,7 @@
         "
       >
         <div>
-          <el-icon @click="handleHidden" style="margin-left: 0.42vw"><CaretLeft /></el-icon>
+          <el-icon @click="handleHidden" style="margin-left: 0.42vw;color: #070707 !important;"><CaretLeft /></el-icon>
         </div>
         <div style="font-weight: 600; margin-left: 0.2vw">生成参考</div>
         <div style="margin-left: 4.4vw; color: #979797" @click="resetCheck">重置</div>
