@@ -9,33 +9,53 @@
         </el-button>
         <!-- 袋子题库 -->
         <div class="problemSet">
-            <el-tabs  class="demo-tabs">
+            <el-tabs  class="demo-tabs" >
                 <!-- 已有题目菜单对应的界面 -->
                 <el-tab-pane label="已有题目" >
-                    <div
-                        class="itemCon"
-                        v-for="(item, index) in generateData.userProblemList"
-                        :key="item.data.problemId"
-                        >
-                        <div style="position: relative">
-                            <!-- <el-checkbox style="position: absolute; top: -0.2vh" v-model="item.isSelet" /> -->
-                            <!-- 试题集的问题 -->
-                            <p style="margin-left: 1vw;">{{ replaceBody(index, item.data.body) }}</p>
-                        </div>
-                        <div class="optionsCon">
+                    <div>
+                        <div
+                            class="itemCon"
+                            v-for="(item, index) in generateData.userProblemList"
+                            :key="item.data.problemId"
+                            
+                            >
+                            <div style="position: relative">
+                                <!-- <el-checkbox style="position: absolute; top: -0.2vh" v-model="item.isSelet" /> -->
+                                <!-- 试题集的问题 -->
+                                <p style="margin-left: 1vw;margin-bottom: 1vh;" :id="'pQuestion' + index">{{ replaceBody(index, item.data.body) }}</p>
+                            </div>
+                            <div
+                                class="subProblem"
+                                v-if="
+                                item.data.subProblemList
+                                "
+                            >
                             <!-- 试题集的选项 -->
-                            <p style="margin-left: 1vw;" class="options-item" v-for="i in item.data.options" :key="i">{{ i }}</p> 
+                                <div v-for="(subItem, subIndex) in item.data.subProblemList" :key="subIndex">
+                                <!-- 1234选项问题 -->
+                                <p class="problem-p" style="margin-left: 1vw;" :id="'pSelect' + index + subIndex" >{{ subItem.body }}</p>
+                                <!-- abcd选项 -->
+                                <div class="optionsCon">
+                                    <p v-for="(optsubItem,optsubIndex) in subItem.options" :key="optsubIndex"  style="margin-left: 1vw;"   :id="'pSelect' + index + subIndex + optsubIndex" >{{ optsubItem }}</p>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="optionsCon" v-else>
+                                
+                                <p style="margin-left: 1vw;" class="options-item" v-for="(optItem,optIndex) in item.data.options" :key="optIndex" :id="'pSelect' + index + '_' + optIndex" >{{ optItem }}</p> 
 
-                        </div>
-                        <div class="item-btns">
-                            <el-button text class="btn1" @click="findError(index,item.subProblemList,item.options)">纠错</el-button> 
-                            <el-button text class="btn2" @click="deleteProblems(item.data.problemId)">删除</el-button>
-                        </div>
-                        <div class="item-btns1" v-show='isError'>
-                            <el-button text class="btn11" @click="cancel(index,item.subProblemList,item.options,item.problemId)">取消</el-button> 
-                            <el-button text class="btn21" @click="confirm(index,item.subProblemList,item.options,item.problemId)">确认</el-button>
+                            </div>
+                            <div class="item-btns">
+                                <el-button text class="btn1" @click="findError(index,item.data.subProblemList,item.data.options)">纠错</el-button> 
+                                <el-button text class="btn2" @click="deleteProblems(item.data.problemId)">删除</el-button>
+                            </div>
+                            <div class="item-btns1" v-show='isError'>
+                                <el-button text class="btn11" @click="cancel(index,item.data.subProblemList,item.data.options)">取消</el-button> 
+                                <el-button text class="btn21" @click="confirm(index,item.data.subProblemList,item.data.options,item.data.problemId)">确认</el-button>
+                            </div>
                         </div>
                     </div>
+                   
 
                 </el-tab-pane>
                 <el-tab-pane label="组成标准试卷">组成标准试卷</el-tab-pane>
@@ -68,9 +88,10 @@
             </div>
             <div class="control">
                 <div class="btns">
-                    <el-button round class="set-other-btn2" @click="reGenerateHandle">直接封装</el-button>
+                    <el-button round class="set-other-btn1" @click="reGenerateHandle">直接封装</el-button>
+                    <el-button round class="set-other-btn2" @click="copyAll()">复制全部</el-button>
                     <el-button round class="set-other-btn2" @click="goToPersonalTopic">进入题库</el-button>
-                    <el-button round class="set-other-btn2" @click="cancleHandle">删除所有</el-button>
+                    <el-button round class="set-other-btn2" @click="deleteAll">删除所有</el-button>
                 </div>
             </div>
         </div>  
@@ -83,23 +104,77 @@ import { useRouter } from 'vue-router';
 import { getCheckedStore } from "@/stores";
 import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
-import { deleteProblem } from "@/api/selectFilter";
+import { deleteProblem , getUserProblemList,reSetProblem } from "@/api/selectFilter";
+
+const originalp1 = ref("")//原始题文本内容
+const originalp2 = ref([])
+const originalp3 = ref([])
+const originalp4 = ref([])
+const bodyP = ref("")//修改后的文本内容累加，用于传递给后端
+const bodyP1 = ref("")//修改后的题文本内容
+const bodyP2 = ref([])
+const bodyP3 = ref([])
+const bodyP4 = ref([])
+
 const generateData = getCheckedStore();
 const isError=ref(false)
+let list = [];
 const replaceBody = (index, body) => {
   // return index + 1 + "." + body.slice(3);
   return index + 1 + "." + body; //设置题库的试题集渲染格式
 
 };
-// 获取用户题集列表
-const getList = () => {
-  generateData.getUserProblems(); 
-  //个人题库模块的右侧信息获取，与左侧试题集无关
-};
-onMounted(() => {
-  getList();
-  
-});
+
+//纠错的获取数据功能
+const getText = (index,List,option) =>{
+  //大问题
+  originalp1.value = document.getElementById('pQuestion' + index).innerText//获取大问题原始内容
+  //小问题和选项
+  if(List){//当情况为1234和对应abcd时
+    for (let subIndex = 0; subIndex < List.length; subIndex++) {
+    const pElement = document.getElementById('pSelect' + index + subIndex);
+    originalp2.value[subIndex] = pElement.innerText  //1234那些问题选项原始内容
+    
+      if(List[subIndex].options){
+        //嵌套for循环，因为每个1234小问题中又有abcd选项
+          for (let i = 0; i < List[subIndex].options.length; i++) {
+              const osElement = document.getElementById('pSelect' + index + subIndex + i);
+              originalp3.value[i] = osElement.innerText //1234小问题中的abcd选项内容
+          } 
+      }
+    }
+    
+  }
+  if(option){//当情况为仅有abcd时
+    for (let opt = 0; opt < option.length; opt++) {
+      const oElement = document.getElementById('pSelect' + index + '_' + opt);
+      originalp4.value[opt] = oElement.innerText //仅有abcd选项
+    }
+  }
+}
+//纠错的编辑功能
+const judgeTopic = (index,List,option,judge) =>{//judge为true时：可编辑。judge为false：不可编辑
+  //大问题
+  document.getElementById('pQuestion' + index).contentEditable = judge; //大问题选项设为可编辑
+  //小问题和选项
+  if(List){//当情况为1234和对应abcd时
+    for (let subIndex = 0; subIndex < List.length; subIndex++) {
+      document.getElementById('pSelect' + index + subIndex).contentEditable = judge  //1234那些问题选项设为可编辑
+    
+      if(List[subIndex].options){
+          //嵌套for循环，因为每个1234小问题中又有abcd选项
+          for (let i = 0; i < List[subIndex].options.length; i++) {
+              document.getElementById('pSelect' + index + subIndex + i).contentEditable = judge //1234小问题中的abcd选项设为可编辑
+          } 
+      }
+    }
+  }
+  if(option){//当情况为仅有abcd时
+    for (let opt = 0; opt < option.length; opt++) {
+      document.getElementById('pSelect' + index + '_' + opt).contentEditable = judge //仅有abcd选项设为可编辑
+    }
+  }
+}
 //纠错（1.显示确认取消按钮 2.赋值获取原来数值3.实现可编辑）
 const findError = (index,List,option) =>{//index:索引，List:选项分为1234和对应的abcd选项，option：选项只有abcd
   isError.value = true; //显示纠错按钮对应的确认按钮和取消按钮  
@@ -109,7 +184,7 @@ const findError = (index,List,option) =>{//index:索引，List:选项分为1234�
   judgeTopic(index,List,option,true)
 };
 //取消（1.隐藏确认取消按钮2.将所有的选项设为不可编辑3.刷新视图）
-const cancel = (index,List,option,id) =>{
+const cancel = (index,List,option) =>{
     //1.
     isError.value = false;
     //2.
@@ -152,7 +227,7 @@ const confirm = async(index,List,option,problemId) =>{
     if(List){//当情况为1234和对应abcd时
       for (let subIndex = 0; subIndex < List.length; subIndex++) {
       bodyP2.value[subIndex] = document.getElementById('pSelect' + index + subIndex).innerText   //1234那些问题选项原始内容
-      bodyP.value = bodyP.value + bodyP2.value[subIndex]+'\n' //累加
+      bodyP.value = bodyP.value + bodyP2.value[subIndex]//累加
         if(List[subIndex].options){
           //嵌套for循环，因为每个1234小问题中又有abcd选项
             for (let i = 0; i < List[subIndex].options.length; i++) {
@@ -173,10 +248,10 @@ const confirm = async(index,List,option,problemId) =>{
       
     }
     const body = bodyP.value.replace(/\\"/g, '') //纠错后加入题库的格式，没有起到效果，依然存在引号
-    console.log('body是',body)
+    // console.log('body是',body)
     //发送请求
     const res = await reSetProblem(body,problemId)
-    console.log('res:',res)
+    // console.log('resssssssssssssss:',res)
   //4.刷新视图数据，实现双向绑定
   document.getElementById('pQuestion' + index).innerText = index + 1 + "." + bodyP1.value
     if(List){//当情况为1234和对应abcd时
@@ -205,7 +280,70 @@ const router = useRouter()
 const goToPersonalTopic = ()=>{
     router.push('/personalTopic')// 进入题库
 }
-// 批量删除
+//全部删除
+const deleteAll = () => {
+  try {
+    list = [];
+    generateData.userProblemList.forEach((item) => {
+      list.push(item.data.problemId); 
+    })
+    if(list.length>0){
+        list.forEach(async (item) => {
+      const res = await deleteProblem(item);
+      generateData.getUserProblems();
+    });
+    ElMessage.success("删除成功！");
+    }else{
+    ElMessage.error("无可删除内容！");    
+    }
+    
+  } catch (error) {
+    ElMessage.error("删除失败！", error);
+  } 
+};
+//复制所有
+const copyAll = async()=>{
+    const res = await getUserProblemList()
+    const text = res.data.data
+    console.log('1111',text)
+    let textList = ''
+    text.forEach((item,index)=>{
+        let i = index +1
+        textList = textList +i+'.'+item.body 
+        if(item.subProblemList){
+        item.subProblemList.forEach((item1)=>{
+            textList = textList + item1.body+item1.options
+        })   
+        }  
+        else{
+          if(item.options){
+            textList = textList + item.options
+             }  
+        } 
+        
+    })
+    console.log('2222',textList)
+  /* var textToCopy = document.getElementById("myInput").value;  
+  var copyText = document.createElement("textarea");  
+  copyText.style.position = 'fixed';  
+  copyText.style.top = 0;  
+  copyText.style.left = 0;  
+  copyText.style.width = '2em';  
+  copyText.style.height = '2em';  
+  copyText.style.padding = 0;  
+  copyText.style.border = 'none';  
+  copyText.style.outline = 'none';  
+  copyText.style.boxShadow = 'none';  
+  copyText.style.background = 'transparent';  
+  copyText.value = textToCopy;  
+  document.body.appendChild(copyText);  
+  copyText.focus();  
+  copyText.select();  
+  document.execCommand('copy');  
+  document.body.removeChild(copyText);   */
+
+}
+// 对应删除
 const deleteProblems = async(index) => {
   try {
       const res = await deleteProblem(index);
@@ -236,6 +374,8 @@ const deleteProblems = async(index) => {
         background-color: white;
         height: 100%;
         border-radius: 0vw 1vw 1vw 1vw;
+        overflow: scroll;
+        padding: 0.5vw;
         .itemCon {
             margin-top: 2.5185vh;    
             margin-bottom: 2vh;       
@@ -325,17 +465,24 @@ const deleteProblems = async(index) => {
             background-color: #fff;
             border-radius: 10px;
             text-align: center;
-            line-height: 6.5vh;
-            position: absolute;
+            line-height: 4vh;
+            position: sticky;
             bottom: 0vh;
-            margin-bottom: 0;
-            padding-bottom: 0;
+            top:79vh;
+            
             right:0vw;
+            .set-other-btn1 {
+            color: #fff;
+            background-color: #6666ff;
+            border-color: #6666ff;
+            width: 7vw;
+            height: 3.5vh;
+            }
             .set-other-btn2 {
             color: #6666ff;
             background-color: #fff;
             border-color: #6666ff;
-            width: 10vw;
+            width: 7vw;
             height: 3.5vh;
             }
         }

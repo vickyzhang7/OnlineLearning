@@ -338,7 +338,7 @@ const mapScopeValue = (label) => {
       const res = await addUserProblem(id)
       if (res.data.data === '添加成功') {
         
-        // isShow.value = true  //五选一，选择完就跳转到生成界面
+        isShow.value = true  //五选一，选择完就跳转到生成界面
         ElMessage.success('添加题库成功！')
       }
     } catch (error) {
@@ -391,6 +391,7 @@ const mapScopeValue = (label) => {
   const handelBag = ()=>{
     // if(totalGenerationProblem.length)  等做完再加上
       isBagProblemSet.value = !isBagProblemSet.value  //显示袋子题库
+      getUserProblems()
 
     
   }

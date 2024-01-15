@@ -220,7 +220,7 @@ const confirm = async(index,List,option,problemId) =>{
     if(List){//当情况为1234和对应abcd时
       for (let subIndex = 0; subIndex < List.length; subIndex++) {
       bodyP2.value[subIndex] = document.getElementById('pSelect' + index + subIndex).innerText   //1234那些问题选项原始内容
-      bodyP.value = bodyP.value + bodyP2.value[subIndex]+'\n' //累加
+      bodyP.value = bodyP.value + bodyP2.value[subIndex] //累加
         if(List[subIndex].options){
           //嵌套for循环，因为每个1234小问题中又有abcd选项
             for (let i = 0; i < List[subIndex].options.length; i++) {

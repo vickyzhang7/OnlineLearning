@@ -15,11 +15,28 @@
         >
           <div style="position: relative">
             <el-checkbox style="position: absolute; top: -0.2vh" v-model="item.isSelet" />
-            <!-- 试题集的问题 -->
-            <p style="margin-left: 1vw">{{ replaceBody(index, item.data.body) }}</p>
+        <!-- 试题集的问题 -->
+            <p class="problem-p"  style="margin-left: 1vw">{{ replaceBody(index, item.data.body) }}</p>
           </div>
-          <div class="optionsCon">
-            <!-- 试题集的选项 -->
+          <div
+            class="subProblem"
+            v-if="
+              item.data.subProblemList
+            "
+          >
+          <!-- 试题集的选项 -->
+            <div v-for="(subItem, subIndex) in item.data.subProblemList" :key="subIndex">
+              <!-- 1234选项问题 -->
+              <p class="problem-p">{{ subItem.body }}</p>
+              <!-- abcd选项 -->
+              <div class="optionsCon">
+                <p v-for="(optsubItem,optsubIndex) in subItem.options" :key="optsubIndex" >{{ optsubItem }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="optionsCon" v-else>
+            
+            <!-- 选项情况2:仅有abcd选项 -->
             <p class="options-item" v-for="i in item.data.options" :key="i">{{ i }}</p> 
 
           </div>
@@ -282,9 +299,12 @@ onMounted(() => {
     position: relative;
     padding: 1vh;
     box-sizing: border-box;
+    .problem-p {
+      width: 100%;
+    }
     &:hover {
       border: 1px solid #6666f6;
-      background-color: #e6eafc;
+      background-color: rgba(102, 102, 255, 0.1);
     }
   }
   .number {
