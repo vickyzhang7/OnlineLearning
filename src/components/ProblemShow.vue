@@ -112,6 +112,7 @@ const cancleHandle = () => {
 // 将题目添加至题库
 const addDataBase = (id) => {
   generateData.addUserProblems(id);
+  generateData.getUserProblems();//主要为了更新袋子
   
 };
 //纠错的编辑功能

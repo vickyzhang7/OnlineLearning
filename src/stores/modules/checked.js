@@ -13,6 +13,8 @@ export const getCheckedStore = defineStore('getChecked', () => {
   const problemsAnalysis = ref([])
   const isShow = ref(true)
   const isBagProblemSet = ref(false) //显示袋子题库
+  const isBag = ref(true) //显示置灰袋子
+  const isBagRed = ref(false) //显示袋子小红点
   const isLoading = ref(false)
   const dialogVisible = ref(false)
   const ProblemTypeData = ref([]) //题目类型
@@ -361,6 +363,7 @@ const mapScopeValue = (label) => {
     } catch (error) {
       ElMessage.error('获取题库失败！')
     }
+    setBagState()
   }
 
   // 根据条件筛选用户题库
@@ -389,13 +392,28 @@ const mapScopeValue = (label) => {
     // console.log('用户题集:', problemSet.value);
   }
   const handelBag = ()=>{
-    // if(totalGenerationProblem.length)  等做完再加上
       isBagProblemSet.value = !isBagProblemSet.value  //显示袋子题库
       getUserProblems()
 
     
   }
-
+  const handleBagRed = () =>{
+    isBag.value = false //加入题库会显示蓝色袋子
+    getUserProblems()  //加入题库才会有小红点
+  
+  }
+const setBagState = ()=>{//更新袋子状态
+  // getUserProblems() //获取用户题集
+//如果题库个数不为0，则显示蓝色袋子，否则显示灰色袋子
+  if(userProblemList.value.length){
+    console.log('题库状态set', userProblemList)
+    isBag.value = false
+    console.log('显示蓝色袋子')
+  }else{
+    isBag.value = true
+    console.log('显示置灰')
+  }
+}
 
   return {
     checkedArr,
@@ -416,6 +434,9 @@ const mapScopeValue = (label) => {
     dialogVisible,
     ProblemTypeData,
     tagArrTop,
+    isBagRed,
+    isBag,
+    setBagState,
     mapDiffValue,
     mapTimeValue,
     mapScopeValue,
@@ -439,6 +460,7 @@ const mapScopeValue = (label) => {
     setDialogVisibleFlase,
     resetChecked,
     initSubject,
-    handelBag
+    handelBag,
+    handleBagRed
   }
 })

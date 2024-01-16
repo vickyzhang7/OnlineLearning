@@ -314,7 +314,14 @@ onMounted(() => {
         <!-- <el-button @click="change">ff</el-button> -->
       </div>
       <!-- 锁购物袋设计：拖拽悬浮 -->
-      <div style="position: absolute;display: inline-block;right: 0;" draggable='true' @click="getTopChecked.handelBag()">
+      <div style="position: absolute;display: inline-block;right: 0;" draggable='true' v-if="getTopChecked.isBag">
+         <img
+          class="dragImg"
+          src="../../assets/lockbag.svg"
+          alt=""
+      />
+      </div>
+      <div style="position: absolute;display: inline-block;right: 0;" draggable='true' @click="getTopChecked.handelBag()" v-else>
          <img
           class="dragImg"
           src="../../assets/usebag.svg"
@@ -322,11 +329,11 @@ onMounted(() => {
       />
       <!-- 购物袋小红点 -->
       <div
-						v-show="getTopChecked.totalGenerationProblem.length"
+						v-show="getTopChecked.userProblemList.length"
 						class="fz"
-						:class="[getTopChecked.totalGenerationProblem.length > 9 ? 'rectangle' : 'circle']"
+						:class="[getTopChecked.userProblemList.length > 9 ? 'rectangle' : 'circle']"
 					>
-						{{ getTopChecked.totalGenerationProblem.length }}
+						{{ getTopChecked.userProblemList.length }}
       </div>
       </div>
        

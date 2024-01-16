@@ -124,7 +124,9 @@ const replaceBody = (index, body) => {
   return index + 1 + "." + body; //设置题库的试题集渲染格式
 
 };
-
+onMounted(()=>{
+    generateData.getUserProblems()
+})
 //纠错的获取数据功能
 const getText = (index,List,option) =>{
   //大问题
@@ -291,21 +293,26 @@ const deleteAll = () => {
         list.forEach(async (item) => {
       const res = await deleteProblem(item);
       generateData.getUserProblems();
+      /* console.log('题库状态',generateData.userProblemList)
+         generateData.setBagState(); */
     });
     ElMessage.success("删除成功！");
     }else{
     ElMessage.error("无可删除内容！");    
     }
-    
+   
   } catch (error) {
     ElMessage.error("删除失败！", error);
   } 
+ /*  console.log('题库状态',generateData.userProblemList.value.length)
+    generateData.setBagState(); */
+  
 };
 //复制所有
 const copyAll = async()=>{
     const res = await getUserProblemList()
     const text = res.data.data
-    console.log('1111',text)
+    
     let textList = ''
     text.forEach((item,index)=>{
         let i = index +1
@@ -322,26 +329,25 @@ const copyAll = async()=>{
         } 
         
     })
-    console.log('2222',textList)
-  /* var textToCopy = document.getElementById("myInput").value;  
-  var copyText = document.createElement("textarea");  
-  copyText.style.position = 'fixed';  
-  copyText.style.top = 0;  
-  copyText.style.left = 0;  
-  copyText.style.width = '2em';  
-  copyText.style.height = '2em';  
-  copyText.style.padding = 0;  
-  copyText.style.border = 'none';  
-  copyText.style.outline = 'none';  
-  copyText.style.boxShadow = 'none';  
-  copyText.style.background = 'transparent';  
-  copyText.value = textToCopy;  
-  document.body.appendChild(copyText);  
-  copyText.focus();  
-  copyText.select();  
-  document.execCommand('copy');  
-  document.body.removeChild(copyText);   */
-
+    
+    const copyText = document.createElement("textarea");  
+    copyText.style.position = 'fixed';  
+    copyText.style.top = 0;  
+    copyText.style.left = 0;  
+    copyText.style.width = '2vw';  
+    copyText.style.height = '2vw';  
+    copyText.style.padding = 0;  
+    copyText.style.border = 'none';  
+    copyText.style.outline = 'none';  
+    copyText.style.boxShadow = 'none';  
+    copyText.style.background = 'transparent';  
+    copyText.value = textList;  
+    document.body.appendChild(copyText);  
+    copyText.focus();  
+    copyText.select();  
+    document.execCommand('copy');  
+    document.body.removeChild(copyText);  
+    ElMessage.success("复制成功！");
 }
 // 对应删除
 const deleteProblems = async(index) => {
@@ -350,7 +356,7 @@ const deleteProblems = async(index) => {
       console.log(res.data);
       ElMessage.success("删除成功！");
       generateData.getUserProblems();
-    
+    //   generateData.setBagState();
   } catch (error) {
     ElMessage.error("删除失败！", error);
   } 
