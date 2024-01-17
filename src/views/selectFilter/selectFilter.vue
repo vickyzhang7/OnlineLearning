@@ -269,6 +269,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    
   </div>
   <div class="under">
     <div class="underLeft" ref="underLeft">
@@ -294,7 +295,8 @@ onMounted(() => {
           <div>
             <el-icon style="margin-left: 0.42vw"><CaretLeft /></el-icon>
           </div>
-          <div style="font-weight: 600; margin-left: 0.2vw">生成题目</div>
+          <div style="font-weight: 600; margin-left: 0.2vw;width: 55vw;">生成题目</div>
+          <div style="font-weight: 600; margin-left: 0.2vw;" v-show="!getTopChecked.isShow">题目分析</div>
           <!-- 右下模块的切换按钮 -->
           <div>
             <img

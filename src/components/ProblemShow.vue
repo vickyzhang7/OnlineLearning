@@ -54,10 +54,31 @@
           </div>
         </div>
       </div>
-
+       <!-- 题目分析 -->
       <div class="problem-analysis">
-        <!-- 题目分析 -->
+        <!-- 中间竖立的小白条 -->
         <div class="split"></div>
+        <!-- 题目分析内容 -->
+        <div class="analysis-content">
+          <div class="con"><span class="title-content">预计时长</span><span>111</span></div>
+          <div class="con"><span class="title-content">正确答案</span></div>
+          <div class="con"><span class="title-content">难度等级</span>
+            <span style="width: 10vw;height: 10vh;"> <el-rate
+                      
+                      v-model="star"
+                      disabled
+                      show-score
+                      text-color="#000000"
+                      score-template="{value} points"
+                    />
+            </span>
+          </div>
+          <div class="con"><span class="title-content">难点考察</span></div>
+          <div class="con"><span class="title-content">学科素养</span></div>
+          <div class="con"><span class="title-content">能力考察</span></div>
+          <div class="con"><span class="title-content">答案分析</span></div>
+
+        </div>
       </div>
     </div>
     <div class="control">
@@ -84,7 +105,7 @@ const isError=ref(false) //点击纠错按钮时候为true
 const replaceBody = (index, body) => {
   return index + 1 + "." + body;
 };
-
+const star = ref(2)
 const originalp1 = ref("")//原始题文本内容
 const originalp2 = ref([])
 const originalp3 = ref([])
@@ -397,6 +418,21 @@ const confirm = async(index,List,option,problemId) =>{
       height: 60%;
       width: 1px;
       background-color: #c1c3ca;
+    }
+    .analysis-content{
+      position: absolute;
+      left: 1.7vw;
+      .con{
+        margin-top: 4vh;
+          .title-content{
+          color: black;
+          font-family: 'PingFang SC';
+          font-style: normal;
+          font-weight: 500;
+          margin-right: 1.5vw;
+          }
+      }
+      
     }
   }
   .control {
