@@ -295,7 +295,7 @@ onMounted(() => {
           <div>
             <el-icon style="margin-left: 0.42vw"><CaretLeft /></el-icon>
           </div>
-          <div style="font-weight: 600; margin-left: 0.2vw;width: 55vw;">生成题目</div>
+          <div style="font-weight: 600; margin-left: 0.2vw;width: 49vw;">生成题目</div>
           <div style="font-weight: 600; margin-left: 0.2vw;" v-show="!getTopChecked.isShow">题目分析</div>
           <!-- 右下模块的切换按钮 -->
           <div>
@@ -457,7 +457,7 @@ onMounted(() => {
   .underRight1 {
   background-color: white;
   // width: 82.29vw;
-  height: 23%;
+  height: 18vh;
   border-radius: 1vw 1vw 1vw 1vw;
   margin-bottom: 1.77vh;
   overflow: scroll;

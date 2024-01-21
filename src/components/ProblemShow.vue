@@ -8,6 +8,7 @@
             generateData.currentItem
           ].dataVO"
           :key="item.problemId"
+          @click="analysisRight(item)"
         >
           <span>
             <svg
@@ -60,23 +61,31 @@
         <div class="split"></div>
         <!-- 题目分析内容 -->
         <div class="analysis-content">
-          <div class="con"><span class="title-content">预计时长</span><span>111</span></div>
-          <div class="con"><span class="title-content">正确答案</span></div>
+          <div class="con"><span class="title-content">预计时长</span><span class="solution-content">{{ dueTime }}</span></div>
+          <div class="con"><span class="title-content">正确答案</span><span class="solution-content">{{ answer }}</span></div>
           <div class="con"><span class="title-content">难度等级</span>
-            <span style="width: 10vw;height: 10vh;"> <el-rate
-                      
-                      v-model="star"
-                      disabled
-                      show-score
-                      text-color="#000000"
-                      score-template="{value} points"
-                    />
+            <span  class="solution-content">
+                <el-rate
+                  style="color: red;"
+                  v-model="diffType"
+                  disabled
+                  show-score
+                  text-color="red"
+                  
+                />
             </span>
           </div>
-          <div class="con"><span class="title-content">难点考察</span></div>
-          <div class="con"><span class="title-content">学科素养</span></div>
-          <div class="con"><span class="title-content">能力考察</span></div>
-          <div class="con"><span class="title-content">答案分析</span></div>
+          <div class="con"><span class="title-content">难点考察</span><span class="solution-content">{{ diffPoint }}</span></div>
+          <div class="con"><span class="title-content">学科素养</span><span class="solution-content">{{ examine }}</span></div>
+          <div class="con" style="display: flex;"><span class="title-content">能力考察</span>
+            <span class="solution-content">
+                      <div>课本贴合度<div id="textFit" style="width:0vw;height:0.4vw;background-image: linear-gradient(90deg, #6666FF 0%, rgba(103, 149, 253, 0.678) 50.17%, rgba(103, 155, 252, 0.6395) 56.17%, rgba(103, 176, 251, 0.496) 78.53%, rgba(104, 205, 250, 0.3) 100.00%); display: inline-block;margin-left: 1.7vw;border-radius: 1vw;"></div></div>
+                      <div>语言应用能力<div id="languageApp" style="width:0vw;height:0.4vw;background-image: linear-gradient(90deg, #6666FF 0%, rgba(103, 149, 253, 0.678) 50.17%, rgba(103, 155, 252, 0.6395) 56.17%, rgba(103, 176, 251, 0.496) 78.53%, rgba(104, 205, 250, 0.3) 100.00%); display: inline-block;margin-left: 0.9vw;border-radius: 1vw;"></div></div>
+                      <div>语境理解能力<div id="languageUnder" style="width:0vw;height:0.4vw;background-image: linear-gradient(90deg, #6666FF 0%, rgba(103, 149, 253, 0.678) 50.17%, rgba(103, 155, 252, 0.6395) 56.17%, rgba(103, 176, 251, 0.496) 78.53%, rgba(104, 205, 250, 0.3) 100.00%); display: inline-block;margin-left: 0.9vw;border-radius: 1vw;"></div></div>
+                      <div>交际能力<div id="communication" style="width:0vw;height:0.4vw;background-image: linear-gradient(90deg, #6666FF 0%, rgba(103, 149, 253, 0.678) 50.17%, rgba(103, 155, 252, 0.6395) 56.17%, rgba(103, 176, 251, 0.496) 78.53%, rgba(104, 205, 250, 0.3) 100.00%); display: inline-block;margin-left: 2.5vw;border-radius: 1vw;"></div></div>
+            </span>
+          </div>
+          <div class="con"><span class="title-content">答案分析</span><span class="solution-content">{{ analysis1 }}</span></div>
 
         </div>
       </div>
@@ -115,7 +124,16 @@ const bodyP1 = ref("")//修改后的题文本内容
 const bodyP2 = ref([])
 const bodyP3 = ref([])
 const bodyP4 = ref([])
-const editableIndexes = ref([]);
+
+//题目分析相关数据
+const dueTime = ref('')       //预计时长
+const answer = ref('')       //正确答案
+const diffType = ref()       //难度等级
+const diffPoint = ref('')   //难点考察
+const examine  = ref('')    //学科素养
+const ability = ref('')    //能力考查
+const analysis1 = ref('')  //答案分析
+
 const emit = defineEmits();
 const reGenerateHandle = () => {
   generateData.regenerate();
@@ -291,6 +309,28 @@ const confirm = async(index,List,option,problemId) =>{
   //5.
   ElMessage.success(`${res.data.data}`)
 }
+
+//右侧题目分析(点击对应题目获取)
+const analysisRight = (item)=>{
+  dueTime.value = item.time +'分钟'
+  answer.value = item.solution
+  diffType.value = item.difficulty
+  diffPoint.value = item.point
+  examine.value = '暂无数据'
+  ability.value = item.capability
+  analysis1.value = item.analysis
+  //设置能力考察相关内容长度显示
+  const textFitLength = ability.value.课本贴合度*3
+  const languageAppLength = ability.value.语言应用能力*3
+  const languageUnderLength = ability.value.语境理解能力*3
+  const communicationLength = ability.value.交际能力*3
+  document.getElementById('textFit').style.width= `${textFitLength}vw`
+  document.getElementById('languageApp').style.width = `${languageAppLength}vw`
+  document.getElementById('languageUnder').style.width = `${languageUnderLength}vw`
+  document.getElementById('communication').style.width = `${communicationLength}vw`
+
+
+}
 </script>
 
 <style lang="scss" scoped>
@@ -303,18 +343,18 @@ const confirm = async(index,List,option,problemId) =>{
     display: flex;
   }
   .problem-body {
-    height: 55.5vh;
+    height: 52vh;
     width: 55vw;
     padding-left: 2vw;
     padding-bottom: 2vh;
     overflow-y: scroll;
   }
   .problem-analysis {
-    width: 30%;
+    width: 40%;
   }
   .itemCon {
     margin-top: 2.5185vh;
-    width: 50vw;
+    width: 45vw;
     position: relative;
     padding: 1vh;
     box-sizing: border-box;
@@ -409,8 +449,10 @@ const confirm = async(index,List,option,problemId) =>{
       width: 25%;
     }
   }
+  
   .problem-analysis {
     position: relative;
+    overflow: scroll;
     .split {
       position: absolute;
       left: 0;
@@ -422,6 +464,7 @@ const confirm = async(index,List,option,problemId) =>{
     .analysis-content{
       position: absolute;
       left: 1.7vw;
+      padding-right: 1vw;
       .con{
         margin-top: 4vh;
           .title-content{
@@ -430,6 +473,9 @@ const confirm = async(index,List,option,problemId) =>{
           font-style: normal;
           font-weight: 500;
           margin-right: 1.5vw;
+          }
+          .solution-content{
+            color: black;
           }
       }
       
@@ -460,4 +506,5 @@ const confirm = async(index,List,option,problemId) =>{
     }
   }
 }
+
 </style>
