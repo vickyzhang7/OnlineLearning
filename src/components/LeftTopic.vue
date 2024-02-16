@@ -96,7 +96,7 @@ const resetCheck = () =>{
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .m-checkbox {
   display: inline-block;
   color: rgba(0, 0, 0, 0.88);

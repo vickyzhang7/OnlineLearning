@@ -91,7 +91,7 @@ const getInfo = () => {
   infoArr.forEach(async (item) => {
     const res = await getTopInfo(item);
     options.value[item] = res.data.data;
-    // console.log(options.value);
+    console.log('infoarr',options.value);
   });
 };
 // 左侧隐藏
@@ -344,7 +344,7 @@ onMounted(() => {
   <!-- 袋子题库 -->
   <bag-problem-set  v-show="getTopChecked.isBagProblemSet"></bag-problem-set>  
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 .selectAll {
   display: flex;
   justify-content: space-around;

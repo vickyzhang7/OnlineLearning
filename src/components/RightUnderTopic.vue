@@ -154,7 +154,7 @@ mitter.on('progress', startLoading()) //兄弟传值
 ,1000) */
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .tagStyle {
   margin-left: 1.04vw;
 }
