@@ -35,12 +35,8 @@ const goToPersonalTopic = ()=>{
         <div class="imgbox1" @click="goToPersonalTopic"><div class="imgbox2"><img style="width:6.26vw;height: 15.09vh;margin-top: 4.5vh;" src="../../assets/personalTopic1.svg"><img style="width:6.26vw;height: 15.09vh;margin-bottom: 4.5vh;" src="../../assets/personalTopic2.svg"></div><div class="imgbox3">个人题库</div></div>
     </div></div>
 </template>
-<style lang="scss">
-body{
-     background-image: url(../../assets/selectP.jpg);
-    // background-image: url("../../assets/Group 2876.svg");
-    background-size: cover;
-}
+<style lang="scss" scoped>
+
 div.title{
     font-family: 'PingFang SC';
     font-style: normal;

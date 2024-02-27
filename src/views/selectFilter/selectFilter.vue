@@ -1,5 +1,7 @@
+<!-- 蒙版okkk -->
+<!-- 11 -->
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted,computed } from "vue";
 import LeftTopic from "../../components/LeftTopic.vue";
 import RightTopTopic from "../../components/RightTopTopic.vue";
 import RightUnderTopic from "../../components/RightUnderTopic.vue";
@@ -7,6 +9,7 @@ import ProblemShow from "../../components/ProblemShow.vue";
 import { getCheckedStore } from "@/stores";
 import { getTopInfo } from "../../api/selectFilter";
 import BagProblemSet from "../../components/BagProblemSet.vue";
+import QuestionPaperOverlay from '../../components/QuestionPaperOverlay.vue';
 
 const value = ref("");
 const value1 = ref("");
@@ -15,6 +18,13 @@ const value3 = ref("");
 const value4 = ref("");
 // 加号按钮的菜单是否显示
 const isChangePageShow = ref(false);
+const showOverlay = ref(false);
+const showQuestionPaper = ref(false);
+const questions = ref([]); 
+const handleOverlayToggle = (show) => {
+  showOverlay.value = show;
+  showQuestionPaper.value = show;
+};
 const infoArr = ["region", "subject", "textbook"];
 const options = ref({});
 const optionsGrade = [
@@ -144,9 +154,18 @@ const mutiChangeHandle = (generateId) => {
   }
 }
 
+// #修改
+const userBagList = computed(() => {
+  return getTopChecked.userBagList
+});
+// #修改
 
 onMounted(() => {
   getInfo();
+  //#修改
+  setTimeout(() => {
+    console.log(userBagList);
+  }, 2000);
 });
 </script>
 <template>
@@ -295,8 +314,8 @@ onMounted(() => {
           <div>
             <el-icon style="margin-left: 0.42vw"><CaretLeft /></el-icon>
           </div>
-          <div style="font-weight: 600; margin-left: 0.2vw;width: 49vw;">生成题目</div>
-          <div style="font-weight: 600; margin-left: 0.2vw;" v-show="!getTopChecked.isShow">题目分析</div>
+          <div style="font-weight: 600; margin-left: 0.2vw;width: 49vw;color: black">生成题目</div>
+          <div style="font-weight: 600; margin-left: 0.2vw;color: black" v-show="!getTopChecked.isShow">题目分析</div>
           <!-- 右下模块的切换按钮 -->
           <div>
             <img
@@ -330,21 +349,50 @@ onMounted(() => {
           alt=""
       />
       <!-- 购物袋小红点 -->
+      <!-- #修改 -->
       <div
-						v-show="getTopChecked.userProblemList.length"
+						v-show="userBagList.length"
 						class="fz"
-						:class="[getTopChecked.userProblemList.length > 9 ? 'rectangle' : 'circle']"
+						:class="[userBagList.length > 9 ? 'rectangle' : 'circle']"
 					>
-						{{ getTopChecked.userProblemList.length }}
+						{{ userBagList.length }}
       </div>
       </div>
        
     </div>
   </div>
   <!-- 袋子题库 -->
-  <bag-problem-set  v-show="getTopChecked.isBagProblemSet"></bag-problem-set>  
+  <div class="overlay" v-show="showOverlay"></div> <!-- 蒙版元素 -->
+  <question-paper-overlay
+  v-if="showQuestionPaper"
+  :questions="questions"
+  @toggle-overlay="handleOverlayToggle"
+  />
+  <bag-problem-set 
+    v-show="getTopChecked.isBagProblemSet" 
+    @toggle-overlay="handleOverlayToggle"
+  ></bag-problem-set>
+
+  <div v-if="showModal" class="modal">
+    <div class="modal-content">
+      <p>{{ errorMessage }}</p>
+      <button @click="showModal = false">确定</button>
+    </div>
+  </div>
+
 </template>
-<style lang="scss">
+
+<style lang="scss" scoped>
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(108, 102, 102, 0.5); // 半透明黑色
+    z-index: 1000; // 确保它在最上层
+  }
 .selectAll {
   display: flex;
   justify-content: space-around;
@@ -407,18 +455,20 @@ onMounted(() => {
 }
 .content {
   display: flex;
+
 }
 .select1 {
   margin-left: 0.3vw;
 }
-.el-input__wrapper {
-  border-radius: 50px;
+.el-select ::v-deep .el-input__wrapper {
+  border-radius: 50px !important;
   border: 1px solid #6666ff;
 }
+
 .el-select {
   --el-select-input-focus-border-color: #6666ff;
 }
-.el-input {
+ .el-input {
   --el-input-placeholder-color: #6666ff;
   --el-input-text-color: #6666ff;
 }
@@ -457,22 +507,22 @@ onMounted(() => {
   .underRight1 {
   background-color: white;
   // width: 82.29vw;
-  height: 18vh;
+  height: 24vh;
   border-radius: 1vw 1vw 1vw 1vw;
   margin-bottom: 1.77vh;
   overflow: scroll;
-}
-.underRight2 {
-  position: relative;
-  background-color: rgba(255, 255, 255, 0.5);
-  // margin-top: 1.77vh;
-  // width: 82.29vw;
-  height: 100%;
-  border-radius: 1vw 1vw 1vw 1vw;
-  flex: 1;
-  // overflow: auto;
-  
-}
+  }
+  .underRight2 {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.5);
+    // margin-top: 1.77vh;
+    // width: 82.29vw;
+    height: 100%;
+    border-radius: 1vw 1vw 1vw 1vw;
+    flex: 1;
+    // overflow: auto;
+    
+  }
 .dragImg {
 position:absolute;
 right:0;
@@ -500,4 +550,5 @@ right:0;
 body{
   color: #000;
 }
+
 </style>

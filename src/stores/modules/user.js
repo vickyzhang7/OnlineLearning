@@ -37,6 +37,9 @@ export const useUserStore = defineStore(
     const removeToken = () => {
       token.value = ''
       localStorage.removeItem("token")
+      // #修改
+      localStorage.removeItem("userBagList")
+      // #修改
     }
 
     const user = ref({})

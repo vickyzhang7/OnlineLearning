@@ -126,13 +126,13 @@ const bodyP3 = ref([])
 const bodyP4 = ref([])
 
 //题目分析相关数据
-const dueTime = ref('')       //预计时长
-const answer = ref('')       //正确答案
+const dueTime = ref('点击试题获取')       //预计时长
+const answer = ref('点击试题获取')       //正确答案
 const diffType = ref()       //难度等级
-const diffPoint = ref('')   //难点考察
-const examine  = ref('')    //学科素养
-const ability = ref('')    //能力考查
-const analysis1 = ref('')  //答案分析
+const diffPoint = ref('点击试题获取')   //难点考察
+const examine  = ref('点击试题获取')    //学科素养
+const ability = ref('点击试题获取')    //能力考查
+const analysis1 = ref('点击试题获取')  //答案分析
 
 const emit = defineEmits();
 const reGenerateHandle = () => {
@@ -151,7 +151,10 @@ const cancleHandle = () => {
 // 将题目添加至题库
 const addDataBase = (id) => {
   generateData.addUserProblems(id);
+
+  // #修改
   generateData.getUserProblems();//主要为了更新袋子
+  // #修改
   
 };
 //纠错的编辑功能

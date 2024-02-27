@@ -70,9 +70,10 @@ onMounted(
   <slot>
     <div
       style="
-        padding-top: 1vh;
-        padding-bottom: 1vh;
+        padding-top: 3vh;
+        padding-bottom: 0.2vh;
         display: flex;
+        height: 1.5vh;
         align-items: center;
         line-height: 1.1vh;
         font-size: 0.9vw;
@@ -81,9 +82,9 @@ onMounted(
       <div>
         <el-icon @click="handleHidden" style="margin-left: 0.42vw"><CaretLeft /></el-icon>
       </div>
-      <div style="font-weight: 600; margin-left: 0.2vw">基础筛选</div>
+      <div style="font-weight: 600; margin-left: 0.2vw;color: black">基础筛选</div>
     </div>
-    <el-form :model="form" :rules="rules" ref="formRef" @change="getCheckedL">
+    <el-form :model="form" :rules="rules" ref="formRef" @change="getCheckedL" style="padding-top: 2vh;">
       <el-form-item prop="question" label="题型类型：">
         <el-radio-group v-model="form.question">
           <!-- {{ item.genre }} -->
@@ -134,16 +135,6 @@ onMounted(
           <el-radio v-for="item in rangeData" :key="item.value" :label="item.value">{{
             item.label
           }}</el-radio>
-          <!-- <el-radio label="期末考核" />
-          <el-radio label="期中考核" />
-          <el-radio label="课堂检测" />
-          <el-radio label="单元测试" />
-          <el-radio label="小升初考试" />
-          <el-radio label="中考" />
-          <el-radio label="高考" />
-          <el-radio label="一模" />
-          <el-radio label="二模" />
-          <el-radio label="三模" /> -->
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -174,5 +165,8 @@ onMounted(
   padding-top: 0;
   padding-bottom: 0;
   margin: 0;
+}
+.el-radio__input.is-checked+.el-radio__label{
+  color:#6666FF;
 }
 </style>

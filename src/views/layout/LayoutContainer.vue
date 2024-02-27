@@ -38,7 +38,8 @@ const activeIndex = ref('1')
 }
 body{
     place-items: initial;
-    background-image: url(../../assets/background.svg);
+    background-image: url(../../assets/selectP.jpg);
+    background-size: cover;
 }
 .el-menu-item:hover {
 background-color: #6666FF !important ;
@@ -56,6 +57,7 @@ background-color: #1F2940 !important;
     color: #FFFFFF !important;
     border-bottom:#6666FF
 }
+
 
 </style>
   

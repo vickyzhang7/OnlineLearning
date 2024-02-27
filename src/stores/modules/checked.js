@@ -39,6 +39,16 @@ export const getCheckedStore = defineStore('getChecked', () => {
   const problemSetList = ref([])
   // 用户题库
   const userProblemList = ref([])
+   // #修改
+  // 用户袋子题库
+  const userBagList = ref(
+    JSON.parse(localStorage.getItem("userBagList")) || []
+  );
+  
+  //当前需要封装的题库，1--口袋题库，2--用户题库
+  const newbag = ref(1)
+
+  // #修改
   // 当前生成的id
   const generateId = ref()
   //最上排的参数获取
@@ -205,11 +215,23 @@ const mapScopeValue = (label) => {
     console.log(checkedArrTotal.value)
   }
   // 生成
+  const showModal = ref(false);
+  const errorMessage = ref('');
   const generateClick = async (description) => {
-    if (checkedArr1.value[1] === null ||checkedArr1.value.length === 0 || checkedTop.value.region === '' || checkedTop.value.grade === 0 || checkedTop.value.genre === '' || checkedTop.value.subject === '' || checkedTop.value.textbook === '') {
-      //去校验top表单
-      // console.log('打印：',checkedTop.value.region ==='',checkedTop.value.grade === 0,checkedTop.value.genre,checkedTop.value.subject === '',checkedTop.value.textbook === '')
-      ElMessage.warning('请完成上侧基础筛选')
+    if (checkedArr1.value[1] === null) {
+      ElMessage.warning('具体提醒类型');
+    } else if (checkedArr1.value.length === 0) {
+      ElMessage.warning('请完成基础筛选');
+    } else if (checkedTop.value.region === '') {
+      ElMessage.warning('请选择地点');
+    } else if (checkedTop.value.grade === 0) {
+      ElMessage.warning('请选择年级');
+    } else if (checkedTop.value.genre === '') {
+      ElMessage.warning('请选择上下册');
+    } else if (checkedTop.value.subject === '') {
+      ElMessage.warning('请选择学科');
+    } else if (checkedTop.value.textbook === '') {
+      ElMessage.warning('请选择教材版本');
     } else {//发起请求，开始生成
       if (count >= 5) {
         ElMessage.warning('最多同时生成五个页面！')
@@ -339,6 +361,24 @@ const mapScopeValue = (label) => {
     try {
       const res = await addUserProblem(id)
       if (res.data.data === '添加成功') {
+        // #修改
+        var obj = {
+          isSelet: false,
+          data:{}
+        };
+        totalGenerationProblem.value.forEach((item, index) => {
+          item.dataVO.forEach((it) => {
+            if (it.problemId == id) {
+              obj.data = { ...it };
+            }
+          });
+        });
+        console.log(userBagList.value);
+        userBagList.value.push(obj);
+
+        localStorage.setItem("userBagList", JSON.stringify(userBagList.value));
+        setBagState()
+        // #修改
         
         isShow.value = true  //五选一，选择完就跳转到生成界面
         ElMessage.success('添加题库成功！')
@@ -405,7 +445,7 @@ const mapScopeValue = (label) => {
 const setBagState = ()=>{//更新袋子状态
   // getUserProblems() //获取用户题集
 //如果题库个数不为0，则显示蓝色袋子，否则显示灰色袋子
-  if(userProblemList.value.length){
+  if(JSON.parse(localStorage.getItem('userBagList')).length){
     console.log('题库状态set', userProblemList)
     isBag.value = false
     console.log('显示蓝色袋子')
@@ -436,6 +476,7 @@ const setBagState = ()=>{//更新袋子状态
     tagArrTop,
     isBagRed,
     isBag,
+    newbag,
     setBagState,
     mapDiffValue,
     mapTimeValue,
@@ -447,6 +488,7 @@ const setBagState = ()=>{//更新袋子状态
     getGrade,
     getGenre,
     getSubject,
+    userBagList,
     getTextbook,
     handleCheckChange,
     getChecked,

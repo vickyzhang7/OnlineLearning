@@ -154,7 +154,7 @@ mitter.on('progress', startLoading()) //兄弟传值
 ,1000) */
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .tagStyle {
   margin-left: 1.04vw;
 }
@@ -165,18 +165,21 @@ mitter.on('progress', startLoading()) //兄弟传值
   .inputGen {
     width: 41.88vw;
     height: 4.7vh;
-    .el-input-group__append {
-      border-radius: 1.83vw;
+  }
+}
+.searchGen ::v-deep .el-input-group__append {
+  border-radius: 1.83vw;
       .buttonSet {
-        background-color: #6666ff !important;
-        color: #ffffff !important;
+        background-color: #6666ff ;
+        color: #ffffff;
         height: 4.7vh;
         width: 10.42vw;
         border-radius: 1.83vw;
       }
     }
-  }
-}
+.inputGen ::v-deep .el-input__wrapper{ //::v-deep用来穿透组件，防scoped的
+      border-radius: 1.83vw 0vw 0vw 1.83vw;
+    }
 .el-input.el-input-group.el-input-group--append.inputGen {
   border: 1.5px solid #6666ff;
   border-radius: 1.83vw;

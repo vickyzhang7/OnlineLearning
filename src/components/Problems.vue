@@ -1,3 +1,4 @@
+<!-- 11111 -->
 <template>
   <div class="container">
     <div class="select-container">
@@ -8,36 +9,30 @@
       <div class="problem-body">
         <!-- 试题集 -->
         <span class="title">试题集</span>
-        <div
-          class="itemCon"
-          v-for="(item, index) in generateData.userProblemList"
-          :key="item.data.problemId"
-        >
+        <div class="itemCon" v-for="(item, index) in generateData.userProblemList" :key="item.data.problemId">
+
           <div style="position: relative">
             <el-checkbox style="position: absolute; top: -0.2vh" v-model="item.isSelet" />
-        <!-- 试题集的问题 -->
-            <p class="problem-p"  style="margin-left: 1vw">{{ replaceBody(index, item.data.body) }}</p>
+            <!-- 试题集的问题 -->
+            <p class="problem-p" style="margin-left: 1vw">{{ replaceBody(index, item.data.body) }}</p>
           </div>
-          <div
-            class="subProblem"
-            v-if="
-              item.data.subProblemList
-            "
-          >
-          <!-- 试题集的选项 -->
+          <div class="subProblem" v-if="item.data.subProblemList
+            ">
+            <!-- 试题集的选项 -->
+
             <div v-for="(subItem, subIndex) in item.data.subProblemList" :key="subIndex">
               <!-- 1234选项问题 -->
               <p class="problem-p">{{ subItem.body }}</p>
               <!-- abcd选项 -->
               <div class="optionsCon">
-                <p v-for="(optsubItem,optsubIndex) in subItem.options" :key="optsubIndex" >{{ optsubItem }}</p>
+                <p v-for="(optsubItem, optsubIndex) in subItem.options" :key="optsubIndex">{{ optsubItem }}</p>
               </div>
             </div>
           </div>
           <div class="optionsCon" v-else>
-            
+
             <!-- 选项情况2:仅有abcd选项 -->
-            <p class="options-item" v-for="i in item.data.options" :key="i">{{ i }}</p> 
+            <p class="options-item" v-for="i in item.data.options" :key="i">{{ i }}</p>
 
           </div>
         </div>
@@ -50,18 +45,13 @@
           <el-button @click="addProblemSetHandle" class="newlist">新建试题集</el-button>
           <!-- <el-button @click="getList" class="newlist">查看用户题集</el-button>
           <el-button @click="printProblem" class="newlist">打印题集</el-button> -->
-          <div
-            class="problem-set-content"
-            v-for="item in generateData.problemSetList"
-            :key="item.problemSetId"
-          >
+          <div class="problem-set-content" v-for="item in generateData.problemSetList" :key="item.problemSetId">
             <p class="problem-set-title">题集：{{ item.problemSetId }}</p>
             <div class="problem-set-main">
               <div class="main-item" v-for="(item, index) in arrData" :key="item.id">
                 <div class="item-title">{{ item.title }}</div>
                 <div class="item-content">
-                  (<span style="color: #6666ff">{{ item.currentNum }}</span
-                  >/{{ item.maxNum }})
+                  (<span style="color: #6666ff">{{ item.currentNum }}</span>/{{ item.maxNum }})
                 </div>
               </div>
               <el-button class="main-item-btn">查看</el-button>
@@ -71,13 +61,13 @@
         <div class="split"></div>
       </div>
     </div>
-
+    <div class="overlay" v-show="showOverlay"></div>
+    <!-- 重要!!@toggle-overlay="handleToggleOverlay" important for the cancel Download -->
+    <QuestionPaperOverlay v-if="showQuestionPaperOverlay" @toggle-overlay="handleToggleOverlay" />
     <div class="control">
       <div class="btns" v-show="!isBatch">
         <el-button round class="set-other-btn2" @click="batchHandle">批量处理</el-button>
-        <el-button round class="set-other-btn2" @click="textEncapsulation"
-          >习题封装</el-button
-        >
+        <el-button round class="set-other-btn2" @click="toggleOverlay">习题封装</el-button>
       </div>
       <div class="btns" v-show="isBatch">
         <el-button class="set-other-btn1" @click="deleteProblems"> 删除 </el-button>
@@ -86,12 +76,8 @@
           编入题集
         </el-button>
         <div class="problem-set-select" v-show="isAddSelect">
-          <p
-            class="select-item"
-            v-for="(item, index) in generateData.problemSetList"
-            :key="item"
-            @click.stop="addToProblemSet(item)"
-          >
+          <p class="select-item" v-for="(item, index) in generateData.problemSetList" :key="item"
+            @click.stop="addToProblemSet(item)">
             题集{{ numberToText[index + 1] }}
           </p>
         </div>
@@ -113,14 +99,19 @@ import { ElMessage } from "element-plus";
 import AddProblemSet from "./AddProblemSet.vue";
 import ProblemTopSelect from "./ProblemTopSelect.vue";
 import { useRouter } from "vue-router";
+import QuestionPaperOverlay from "./QuestionPaperOverlay.vue";
 // const seletList = ref([])
 const router = useRouter();
+
 const topValue = computed(() => {
   return "-" + generateData.problemSetList.length * 3 + "vh";
 });
 const isAddSelect = ref(false);
 const isAddProblemSet = ref(false);
 const isBatch = ref(false);
+const showOverlay = ref(false);
+const showQuestionPaperOverlay = ref(false);
+
 const numberToText = {
   1: "一",
   2: "二",
@@ -202,7 +193,17 @@ const deleteProblems = () => {
       console.log(res.data);
       ElMessage.success("删除成功！");
       generateData.getUserProblems();
+      
+      //#修改 题库删除后口袋要同步
+        generateData.userBagList.forEach((itemm, indexx) => {
+          if (item == itemm.data.problemId) {
+            generateData.userBagList.splice(indexx, 1)
+            localStorage.setItem("userBagList", JSON.stringify(generateData.userBagList));
+          }
+        })
+         //#修改
     });
+
   } catch (error) {
     ElMessage.error("删除失败！", error);
   } finally {
@@ -211,6 +212,7 @@ const deleteProblems = () => {
 };
 // 习题封装
 const textEncapsulation = () => {
+  console.log("Clicked '习题封装'");
   isAddSelect.value = !isAddSelect.value;
 };
 
@@ -255,9 +257,47 @@ const addToProblemSet = (seqNum) => {
 onMounted(() => {
   getList();
 });
+
+// const toggleOverlay = () => {
+//   showOverlay.value = !showOverlay.value;
+//   showQuestionPaperOverlay.value = !showQuestionPaperOverlay.value;
+//   // You can add additional logic here if needed
+// };
+
+const emit = defineEmits(['toggle-overlay']);
+
+const toggleOverlay = () => {
+  generateData.newbag = 2
+  showOverlay.value = !showOverlay.value;
+  showQuestionPaperOverlay.value = !showQuestionPaperOverlay.value;
+  emit('toggle-overlay', true, selectedQuestions.value);
+};
+// <!-- 重要!!important for the cancel Download -->
+const handleToggleOverlay = (isVisible, selectedQuestions) => {
+  showOverlay.value = isVisible;
+  showQuestionPaperOverlay.value = isVisible;
+  if (!isVisible) {
+    // If the overlay is hidden, update the selectedQuestions data
+    generateData.userProblemList.forEach((item, index) => {
+      item.isSelet = false; // Assuming you have an isSelet property in userProblemList items
+    });
+    // Reset any other necessary data or state here
+  }
+};
+
 </script>
 
 <style lang="scss" scoped>
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); // Adjust the transparency as needed
+  z-index: 1000; // Ensure the overlay is above other elements
+}
+
 .container {
   //   height: 55vh;
   width: 100%;
@@ -265,33 +305,40 @@ onMounted(() => {
   font-size: 0.835vw;
   //   background-color: rgba(255, 255, 255, 0.5);
   color: #4f4f4f;
+
   .select-container {
     width: 100%;
     height: 10%;
     position: relative;
   }
+
   .innercon {
     display: flex;
     width: 100%;
     height: 80%;
   }
+
   .problem-body {
     height: 100%;
     width: 70%;
     padding-left: 2vw;
     padding-bottom: 2vh;
     overflow-y: hidden;
+
     &:hover {
       overflow-y: auto;
     }
+
     .title {
       font-size: 0.833vw;
       color: #4f4f4f;
     }
   }
+
   .problem-analysis {
     width: 30%;
   }
+
   .itemCon {
     margin-top: 2.5185vh;
     // width: 50vw;
@@ -299,32 +346,40 @@ onMounted(() => {
     position: relative;
     padding: 1vh;
     box-sizing: border-box;
+
     .problem-p {
       width: 100%;
     }
+
     &:hover {
       border: 1px solid #6666f6;
       background-color: rgba(102, 102, 255, 0.1);
     }
   }
+
   .number {
     font-size: 0.8vw;
     color: #939496;
+
     .svvg {
       margin-right: 0.5vw;
     }
   }
+
   .optionsCon {
     padding: 0;
     display: flex;
     justify-content: space-between;
+
     .options-item {
       width: 25%;
     }
   }
+
   .problem-list {
     position: relative;
     width: 30%;
+
     .split {
       position: absolute;
       left: 0;
@@ -333,11 +388,13 @@ onMounted(() => {
       width: 1px;
       background-color: #c1c3ca;
     }
+
     .list-content {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+
       .newlist {
         width: 80.5%;
         height: 5.55vh;
@@ -346,14 +403,17 @@ onMounted(() => {
         color: #6666ff;
         border-radius: 1vh;
       }
+
       .problem-set-content {
         width: 20.35vw;
         height: 7.6vh;
         background-color: transparent;
+
         .problem-set-title {
           font-size: 0.73vw;
           color: #4f4f4f;
         }
+
         .problem-set-main {
           width: 100%;
           height: 5.2vh;
@@ -362,25 +422,31 @@ onMounted(() => {
           display: flex;
           position: relative;
           transition: all 0.1s;
+
           &:hover {
             background-color: #dde8ff;
             border: 3px solid #6666ff;
           }
+
           .main-item {
             width: 2.45vw;
             height: 3.7vh;
             margin-top: 1vh;
+
             // margin-left: .5vw;
             &:first-child {
               margin-left: 1.5vw;
             }
+
             .item-title {
               font-size: 0.63vw;
             }
+
             .item-content {
               font-size: 0.525vw;
             }
           }
+
           .main-item-btn {
             position: absolute;
             right: 1vw;
@@ -396,6 +462,7 @@ onMounted(() => {
       }
     }
   }
+
   .control {
     width: 100%;
     height: 10%;
@@ -403,6 +470,7 @@ onMounted(() => {
     border-radius: 10px;
     text-align: center;
     line-height: 6.5vh;
+
     .set-other-btn1 {
       color: #6666ff;
       background-color: #fff;
@@ -410,6 +478,7 @@ onMounted(() => {
       width: 5vw;
       height: 3.5vh;
     }
+
     .set-other-btn2 {
       color: #6666ff;
       background-color: #fff;
@@ -417,8 +486,10 @@ onMounted(() => {
       width: 10vw;
       height: 3.5vh;
     }
+
     .btns {
       position: relative;
+
       .problem-set-select {
         position: absolute;
         // width: 6.8vw;
@@ -428,16 +499,19 @@ onMounted(() => {
         right: 32.4vw;
         border-radius: 1vh;
         box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+
         .select-item {
           width: 6.8vw;
           height: 3vh;
           line-height: 3vh;
           text-align: center;
           cursor: pointer;
+
           &:hover {
             background-color: #ebefff;
           }
         }
+
         .active {
           background-color: #ebefff;
         }
@@ -449,36 +523,44 @@ onMounted(() => {
 :deep(.el-radio__inner) {
   display: none;
 }
+
 :deep(.el-form-item) {
   margin-bottom: 0px;
   margin-left: 1.52vw;
 }
+
 :deep(.el-form-item__label) {
   font-size: 0.9vw;
   color: #000000;
 }
+
 :deep(.el-radio__label) {
   font-size: 0.9vw;
   color: #4f4f4f;
 }
+
 :deep(.el-form-item__error) {
   top: 80%;
 }
+
 :deep(.el-popover.popoverStyle) {
   //   height: 1vh;
   padding-top: 0;
   padding-bottom: 0;
   margin: 0;
 }
+
 :deep(.el-checkbox__label) {
   color: #4f4f4f;
   font-size: 0.833vw;
   white-space: normal;
   word-break: break-all;
 }
+
 :deep(.el-radio-group) {
   //   background-color: #fff;
 }
+
 :deep(.el-checkbox__inner) {
   background-color: transparent;
   border: 1px solid #6666f6;
@@ -494,11 +576,12 @@ onMounted(() => {
   width: 0;
   height: 0;
 }
+
 :deep(.el-popper__arrow::before) {
   width: 0;
   height: 0;
 }
+
 :deep(.item-raido-group) {
   background-color: #fff;
-}
-</style>
+}</style>

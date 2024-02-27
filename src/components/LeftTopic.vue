@@ -1,3 +1,4 @@
+<!-- 22 -->
 <template>
   <slot>
     <div
@@ -12,7 +13,7 @@
         <div>
           <el-icon @click="handleHidden" style="margin-left: 0.42vw;color: #070707 !important;"><CaretLeft /></el-icon>
         </div>
-        <div style="font-weight: 600; margin-left: 0.2vw">生成参考</div>
+        <div style="font-weight: 600; margin-left: 0.2vw;color:black">生成参考</div>
         <div style="margin-left: 4.4vw; color: #979797" @click="resetCheck">重置</div>
       </div>
       <div
@@ -29,18 +30,21 @@
           知识点生成
         </div>
         |
-        <div style="margin-left: 0.9vw" id="text" @click="isText">教材生成</div>
+        <div style="margin-left: 0.9vw;color: black" id="text" @click="isText">教材生成</div>
       </div>
-    <el-tree
-      ref="treeRef"
-      :data="data"
-      show-checkbox
-      node-key="$treeNodeId"
-      :default-expanded-keys="[2, 3]"
-      :default-checked-keys="[5]"
-      :props="defaultProps"
-      @check-change="getLeftChecked.handleCheckChange"
-    />
+      <div class="treeSet">
+          <el-tree
+            ref="treeRef"
+            :data="data"
+            show-checkbox
+            node-key="$treeNodeId"
+            :default-expanded-keys="[]"
+            :default-checked-keys="[5]"
+            :props="defaultProps"
+            @check-change="getLeftChecked.handleCheckChange"
+          />
+      </div>
+    
   </slot>
 </template>
 
@@ -52,7 +56,6 @@ import { getTopic } from "@/api/selectFilter";
 const defaultProps = ref({
   children: "children",
   label: "name",
-  disabled:'notLeaf'
 });
 const emit = defineEmits();
 const data = ref([]);
@@ -96,7 +99,7 @@ const resetCheck = () =>{
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .m-checkbox {
   display: inline-block;
   color: rgba(0, 0, 0, 0.88);
@@ -196,30 +199,29 @@ const resetCheck = () =>{
     display: block;
   }
 }
-div.el-tree {
+.treeSet ::v-deep .el-tree {
   font-size: 0.8vw;
 }
-.el-checkbox {
+.treeSet ::v-deep .el-checkbox {
   --el-checkbox-checked-bg-color: #bdcefc;
   --el-checkbox-input-border-color-hover: #6666ff;
 }
-.el-checkbox__input.is-checked .el-checkbox__inner {
+.treeSet ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
   border-color: #6666ff;
 }
-.el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
+.treeSet ::v-deep .el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
   background-color: #6666ff;
 }
-.el-checkbox__input.is-checked .el-checkbox__inner::after {
+.treeSet ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner::after {
   border-color: #6666ff;
 }
 :root {
   --el-color-primary: #6666ff;
 }
-.el-tree {
+.treeSet ::v-deep .el-tree {
   --el-tree-node-content-height: 2.8vh;
 }
-.el-checkbox__inner {
-  background-color: transparent;
+.treeSet ::v-deep .el-checkbox__inner {
   border: 1px solid #6666f6;
 }
 </style>

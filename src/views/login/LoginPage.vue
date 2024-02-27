@@ -4,11 +4,12 @@ import { ElMessage } from 'element-plus'
 import {  onMounted,reactive, ref, watch } from 'vue'
 import { useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
+const isChecked = ref(false)
 const isRegister = ref(false)
 const isForget = ref(false)
 const isLogin = ref(true)
 const form = ref()
-
+// 不要再继续撤回了，已经实现了一个功能。
 // 整个的用于提交的form数据对象
 const formModel = ref({
   username: '',
@@ -19,16 +20,17 @@ const formModel = ref({
   verifyCode:'',
   registerCode:'',
   repassword:'',
-  isChecked:false,
   saveToken:false
-  
 })
+
 
 const sms = reactive({ //验证码
   disabled:false,
   waitTime:60,
   count:0
 })
+
+
 // 整个表单的校验规则
 // 1. 非空校验 required: true      message消息提示，  trigger触发校验的时机 blur change
 // 2. 长度校验 min:xx, max: xx
@@ -93,15 +95,14 @@ const rules = {
 
 const register = async () => {
   // 注册成功之前，先进行校验，校验成功 → 请求，校验失败 → 自动提示
-  if(formModel.value.isChecked === true){
-  await form.value.validate()
-  await userRegisterService(formModel.value)
-  ElMessage.success('注册成功')
-  isRegister.value = false
-  isForget.value = false
-  isLogin.value = true
-  }else{
-       ElMessage.warning('请阅读并签署条款')}
+  if (formModel.value.isChecked === true) {
+    await form.value.validate();
+    const res = await userRegisterService(formModel.value);
+    ElMessage.success('注册成功');
+    isChecked.value = false;
+  } else {
+    ElMessage.warning('请阅读并签署条款');
+  }
 }
 
 const userStore = useUserStore()
@@ -160,22 +161,38 @@ const sendCode = async () =>{
     await uesrVerifyEmail(formModel.value.email)
   }
 }
-// 判断表单是否为空的函数
-const isFormEmpty = () => {
- return Object.values(formModel.value).some(value => value === '');
-};
-// 处理表单变化的函数
+
+// 登录判断表单
 const handleFormChange = () => {
-  // 判断表单是否为空
-  if (isFormEmpty()) {
-    // 触发相应的函数
-    document.querySelector('.button-login').style.backgroundColor = '#BDCEFC';
-  }else{
+    // 判断表单是否为空
+    if (formModel.value.username !== '' && formModel.value.password !== '' && formModel.value.isChecked) {
+        document.querySelector('.button-login').style.backgroundColor = '#6666FF';
+    } else {
+        document.querySelector('.button-login').style.backgroundColor = '#BDCEFC';
+    }
+};
+// 注册判断表单
+const handleRegisterFormChange = () => {
+  // 判断注册表单是否都有值
+  if (formModel.value.username !== '' && formModel.value.password !== '' && formModel.value.school !== '' && formModel.value.subject !== '' && formModel.value.email !== '' && formModel.value.verifyCode !== '' && formModel.value.isChecked) {
     document.querySelector('.button-login').style.backgroundColor = '#6666FF';
+  } else {
+    document.querySelector('.button-login').style.backgroundColor = '#BDCEFC';
   }
 };
 
+
 onMounted(()=>{
+  formModel.value.isChecked = false;
+  watch([() => formModel.value.username, () => formModel.value.password, () => formModel.value.isChecked], () => {
+        handleFormChange(); // 更新按钮样式
+    });
+  watch([() => formModel.value.username, () => formModel.value.password, () => formModel.value.school, () => formModel.value.subject, () => formModel.value.email, () => formModel.value.verifyCode, () => formModel.value.isChecked], () => {
+        handleRegisterFormChange();
+    });
+
+  
+
   //1.携带token请求用户信息
   /* let usernameId = localStorage.getItem("userId");
     if(usernameId){//如果用户之前选择了30天免登陆，那就说明存储了useriId
@@ -186,9 +203,9 @@ onMounted(()=>{
       if(token){
       router.push("/") //跳转首页
     }
-
     // 监听表单变化
     handleFormChange()
+    handleRegisterFormChange()
   }
 )
  
@@ -203,7 +220,7 @@ watch(isLogin, () => {
 })
 
 // 切换为注册的时候，重置表单内容
-watch(isRegister, () => {
+watch(isRegister.value, () => {
   formModel.value = {
     username: '',
     password: '',
@@ -262,7 +279,7 @@ watch(isForget, () =>{
       <el-form
         :model="formModel"
         :rules="rules"
-        @change="handleFormChange()"
+        @change="handleRegisterFormChange"
         ref="form"
         size="large"
         autocomplete="off"
@@ -337,7 +354,7 @@ watch(isForget, () =>{
             注册
           </el-button>
             <div class="flex1">
-            <el-checkbox class="read"  style="margin-top: 5vh;margin-left:3vw" v-model="formModel.isChecked">阅读并接受<el-link :underline="false" href="_blank" class="privacy">《隐私条款》</el-link>与<el-link :underline="false" href="_blank" class="privacy">《隐私协议》</el-link></el-checkbox>
+              <el-checkbox class="read" style="margin-top: 5vh;margin-left:2vw" v-model="formModel.isChecked">阅读并接受<el-link :underline="false" href="_blank" class="privacy">《隐私条款》</el-link>与<el-link :underline="false" href="_blank" class="privacy">《隐私协议》</el-link></el-checkbox>
             </div>
       </el-form>
 
