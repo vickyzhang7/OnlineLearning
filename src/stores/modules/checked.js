@@ -445,7 +445,7 @@ const mapScopeValue = (label) => {
 const setBagState = ()=>{//更新袋子状态
   // getUserProblems() //获取用户题集
 //如果题库个数不为0，则显示蓝色袋子，否则显示灰色袋子
-  if(JSON.parse(localStorage.getItem('userBagList')).length){
+  if(JSON.parse(localStorage.getItem('userBagList'))?.length){
     console.log('题库状态set', userProblemList)
     isBag.value = false
     console.log('显示蓝色袋子')
