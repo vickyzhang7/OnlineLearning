@@ -141,7 +141,7 @@ onMounted(
   </slot>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .el-radio__inner {
   display: none;
 }

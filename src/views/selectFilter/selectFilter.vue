@@ -101,7 +101,7 @@ const getInfo = () => {
   infoArr.forEach(async (item) => {
     const res = await getTopInfo(item);
     options.value[item] = res.data.data;
-    // console.log(options.value);
+    console.log('infoarr',options.value);
   });
 };
 // 左侧隐藏
@@ -381,18 +381,7 @@ onMounted(() => {
   </div>
 
 </template>
-
 <style lang="scss" scoped>
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(108, 102, 102, 0.5); // 半透明黑色
-    z-index: 1000; // 确保它在最上层
-  }
 .selectAll {
   display: flex;
   justify-content: space-around;
