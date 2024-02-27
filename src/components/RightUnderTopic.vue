@@ -167,19 +167,24 @@ mitter.on('progress', startLoading()) //兄弟传值
     height: 4.7vh;
   }
 }
-.searchGen ::v-deep .el-input-group__append {
+.searchGen :deep(.el-input-group__append) {
   border-radius: 1.83vw;
-      .buttonSet {
-        background-color: #6666ff ;
-        color: #ffffff;
-        height: 4.7vh;
-        width: 10.42vw;
-        border-radius: 1.83vw;
-      }
-    }
-.inputGen ::v-deep .el-input__wrapper{ //::v-deep用来穿透组件，防scoped的
-      border-radius: 1.83vw 0vw 0vw 1.83vw;
-    }
+
+  /* buttonSet 样式应该是同级的选择器 */
+  .buttonSet {
+    background-color: #6666ff;
+    color: #ffffff;
+    height: 4.7vh;
+    width: 10.42vw;
+    border-radius: 1.83vw;
+  }
+}
+
+.inputGen :deep(.el-input__wrapper) {
+  /* :deep用来穿透组件，防scoped的 */
+  border-radius: 1.83vw 0vw 0vw 1.83vw;
+}
+
 .el-input.el-input-group.el-input-group--append.inputGen {
   border: 1.5px solid #6666ff;
   border-radius: 1.83vw;

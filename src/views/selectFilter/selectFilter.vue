@@ -449,10 +449,11 @@ onMounted(() => {
 .select1 {
   margin-left: 0.3vw;
 }
-.el-select ::v-deep .el-input__wrapper {
-  border-radius: 50px !important;
+.el-select :deep(.el-input__wrapper) {
+  border-radius: 50px;
   border: 1px solid #6666ff;
 }
+
 
 .el-select {
   --el-select-input-focus-border-color: #6666ff;

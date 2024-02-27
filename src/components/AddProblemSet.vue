@@ -184,19 +184,20 @@ const addProblemHandle = async () => {
   }
 }
 
-::v-deep .el-slider__stop {
-  // 进度条上间断点的样式
+:deep(.el-slider__stop) {
+  /* 进度条上间断点的样式 */
   border: 1px solid var(--el-color-primary);
   box-sizing: border-box;
 }
 
-::v-deep .el-slider__button {
-  // 拖动的滑块的样式
+:deep(.el-slider__button) {
+  /* 拖动的滑块的样式 */
   width: 1.05vw;
   height: 1.05vw;
   border: 1px solid #6666ff;
   border-radius: 50%;
   position: relative;
-  //   left: 4px;
+  /* left: 4px; */
 }
+
 </style>

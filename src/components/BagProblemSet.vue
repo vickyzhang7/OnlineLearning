@@ -551,18 +551,18 @@ const userBagList = computed(() => {
   }
 }
 
-.bagProblemSet ::v-deep .el-tabs__item.is-active {
+.bagProblemSet :deep(.el-tabs__item.is-active) {
   color: #6666f6;
 }
 
-.bagProblemSet ::v-deep .el-tabs__item:hover {
+.bagProblemSet :deep(.el-tabs__item:hover) {
   color: #6666f6;
 }
 
-.bagProblemSet ::v-deep .el-tabs__active-bar {
+.bagProblemSet :deep(.el-tabs__active-bar) {
   background-color: #6666f6;
-
 }
+
 
 /* 111111111111111111111111111111111 */
 /* 111111111111111111111111111111111 */

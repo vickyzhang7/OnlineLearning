@@ -199,29 +199,37 @@ const resetCheck = () =>{
     display: block;
   }
 }
-.treeSet ::v-deep .el-tree {
+.treeSet :deep(.el-tree) {
   font-size: 0.8vw;
 }
-.treeSet ::v-deep .el-checkbox {
+
+.treeSet :deep(.el-checkbox) {
   --el-checkbox-checked-bg-color: #bdcefc;
   --el-checkbox-input-border-color-hover: #6666ff;
 }
-.treeSet ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
+
+.treeSet :deep(.el-checkbox__input.is-checked) .el-checkbox__inner {
   border-color: #6666ff;
 }
-.treeSet ::v-deep .el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
+
+.treeSet :deep(.el-checkbox__input.is-indeterminate) .el-checkbox__inner::before {
   background-color: #6666ff;
 }
-.treeSet ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner::after {
+
+.treeSet :deep(.el-checkbox__input.is-checked) .el-checkbox__inner::after {
   border-color: #6666ff;
 }
+
 :root {
   --el-color-primary: #6666ff;
 }
-.treeSet ::v-deep .el-tree {
+
+.treeSet :deep(.el-tree) {
   --el-tree-node-content-height: 2.8vh;
 }
-.treeSet ::v-deep .el-checkbox__inner {
+
+.treeSet :deep(.el-checkbox__inner) {
   border: 1px solid #6666f6;
 }
+
 </style>
