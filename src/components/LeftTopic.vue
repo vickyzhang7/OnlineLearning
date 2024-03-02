@@ -1,55 +1,67 @@
 <!-- 22 -->
 <template>
   <slot>
-    <div
-        style="
+    <div style="
           margin-top: 1vh;
           display: flex;
           align-items: center;
           line-height: 1.1vh;
           font-size: 0.9vw;
-        "
-      >
-        <div>
-          <el-icon @click="handleHidden" style="margin-left: 0.42vw;color: #070707 !important;"><CaretLeft /></el-icon>
-        </div>
-        <div style="font-weight: 600; margin-left: 0.2vw;color:black">生成参考</div>
-        <div style="margin-left: 4.4vw; color: #979797" @click="resetCheck">重置</div>
+        ">
+      <div>
+        <el-icon
+          @click="handleHidden"
+          style="margin-left: 0.42vw;color: #070707 !important;"
+        >
+          <CaretLeft />
+        </el-icon>
       </div>
+      <div style="font-weight: 600; margin-left: 0.2vw;color:black">生成参考</div>
       <div
-        style="
+        style="margin-left: 4.4vw; color: #979797"
+        @click="resetCheck"
+      >重置</div>
+    </div>
+    <div style="
           display: flex;
           margin-left: 1.52vw;
           margin-top: 1vh;
           margin-bottom: 1vh;
           font-weight: 600;
           font-size: 0.9vw;
-        "
+        ">
+      <div
+        style="margin-right: 0.8vw; color: #6666ff"
+        @click="isKnowledge"
+        id="know"
       >
-        <div style="margin-right: 0.8vw; color: #6666ff" @click="isKnowledge" id="know">
-          知识点生成
-        </div>
-        |
-        <div style="margin-left: 0.9vw;color: black" id="text" @click="isText">教材生成</div>
+        知识点生成
       </div>
-      <div class="treeSet">
-          <el-tree
-            ref="treeRef"
-            :data="data"
-            show-checkbox
-            node-key="$treeNodeId"
-            :default-expanded-keys="[]"
-            :default-checked-keys="[5]"
-            :props="defaultProps"
-            @check-change="getLeftChecked.handleCheckChange"
-          />
-      </div>
-    
+      |
+      <div
+        style="margin-left: 0.9vw;color: black"
+        id="text"
+        @click="isText"
+      >教材生成</div>
+    </div>
+    <div class="treeSet">
+      <el-tree
+        ref="treeRef"
+        :data="data"
+        show-checkbox
+        node-key="$treeNodeId"
+        :default-expanded-keys="[]"
+        :default-checked-keys="[]"
+        :props="defaultProps"
+        @check-change="getLeftChecked.handleCheckChange"
+      />
+    </div>
+
   </slot>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { ElTree } from "element-plus";
 import { getCheckedStore } from "@/stores";
 import { getTopic } from "@/api/selectFilter";
@@ -57,15 +69,67 @@ const defaultProps = ref({
   children: "children",
   label: "name",
 });
+const props = defineProps(["isOpenBottom"])
+// 拿到是否是阅读选择
+
+watch(() => props.isOpenBottom, (newValue, oldValue) => {
+  console.log('变化了', newValue, oldValue)
+  if (newValue) {
+    let themeIndex = ''
+    for (let i = 0; i < data.value.length; i++) {
+      if (data.value[i].name == '主题') {
+        themeIndex = i
+      }
+    }
+    if (themeIndex !== undefined && themeIndex !== null) {
+      data.value.splice(themeIndex, 1)
+    }
+  } else {
+    console.log();
+    if (!newValue && newValue != oldValue) {
+      data.value.unshift(themeData.value)
+    }
+  }
+}, { immediate: false, deep: true })
+
 const emit = defineEmits();
 const data = ref([]);
+const themeData = ref({})
+const openWatch = ref(false)
 const treeRef = ref();
 const getLeft = async () => {
   const res = await getTopic();
+  // themeData = res.data.data[]
   data.value = res.data.data;
+  console.log(res.data.data, '侧边栏数据');
+  for (let item of res.data.data) {
+    if (item.name == '主题') {
+      themeData.value = item
+      console.log(getThemeData(item), '递归11222');
+      emit('transfer', getThemeData(item))
+      openWatch.value = true
+    }
+  }
   //渲染筛选生成界面左侧数据
-  
 };
+//递归获取最后一级数据
+const getThemeData = (node) => {
+  let arr = []
+  // 定义一个函数
+  function getChilde(node) {
+    if (node.children && node.children.length) {
+      for (let i = 0, len = node.children.length; i < len; i++) {
+        getChilde(node.children[i])
+      }
+    } else {
+      arr.push(node)
+    }
+    return arr
+  }
+  getChilde(node)
+  return arr
+}
+
 const knowledge = ref(true);
 const textbook = ref(false);
 const isKnowledge = () => {
@@ -86,16 +150,16 @@ const isText = () => {
   text.style.color = "#6666FF";
 };
 //左侧按图标收起
-const handleHidden = () =>{
+const handleHidden = () => {
   emit('hiddenEventL')
 }
 onMounted(() => getLeft());
 const getLeftChecked = getCheckedStore(); //引入仓库，要获得选中的值
 //重置左侧选项
-const resetCheck = () =>{
+const resetCheck = () => {
   getLeftChecked.resetChecked();
   treeRef.value.setCheckedKeys([], false); //setup语法糖不能用this.$ref，直接用就行
-//重置不生效，还是有bug，待解决
+  //重置不生效，还是有bug，待解决
 }
 </script>
 
@@ -146,7 +210,8 @@ const resetCheck = () =>{
           transform: rotate(45deg) scale(0) translate(-50%, -50%);
           opacity: 0;
           content: "";
-          transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6), opacity 0.1s;
+          transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),
+            opacity 0.1s;
         }
       }
       .u-checkbox-checked {
@@ -212,7 +277,9 @@ const resetCheck = () =>{
   border-color: #6666ff;
 }
 
-.treeSet :deep(.el-checkbox__input.is-indeterminate) .el-checkbox__inner::before {
+.treeSet
+  :deep(.el-checkbox__input.is-indeterminate)
+  .el-checkbox__inner::before {
   background-color: #6666ff;
 }
 
@@ -231,5 +298,4 @@ const resetCheck = () =>{
 .treeSet :deep(.el-checkbox__inner) {
   border: 1px solid #6666f6;
 }
-
 </style>

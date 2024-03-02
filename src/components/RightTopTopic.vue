@@ -14,7 +14,9 @@ const form2 = ref({
   questionType: "",
 });
 const rules2 = {
-  questionType: [{ required: true, message: "请选择题目具体类型", trigger: "change" }],
+  questionType: [
+    { required: true, message: "请选择题目具体类型", trigger: "change" },
+  ],
 };
 // 考核范围
 const rangeData = ref([]);
@@ -28,42 +30,52 @@ const rules = {
 const getRightChecked = getCheckedStore();
 const getCheckedL = async () => {
   // console.log(form.value.time.split(",").map((i) => +i));
-  await formRef.value.validate();
-  // console.log(checkedArr11.value);
-  getRightChecked.getChecked(
-    form.value.question,
-    form2.value.questionType,
-    form.value.difficulty,
-    form.value.time.split(",").map((i) => +i),
-    form.value.scope
-  );
+  //#修改阅读部门 选择为阅读选择的时候出现右下弹窗
+  if (form2.value.questionType == "阅读选择") {
+    emit("openBottom");
+    await formRef.value.validate();
+    // console.log(checkedArr11.value);
+    getRightChecked.getChecked(
+      form.value.question,
+      form2.value.questionType,
+      form.value.difficulty,
+      form.value.time.split(",").map((i) => +i),
+      form.value.scope
+    );
+  } else {
+    emit("closeBottom");
+    await formRef.value.validate();
+    // console.log(checkedArr11.value);
+    getRightChecked.getChecked(
+      form.value.question,
+      form2.value.questionType,
+      form.value.difficulty,
+      form.value.time.split(",").map((i) => +i),
+      form.value.scope
+    );
+  }
 };
 
-const labelMap = new Map()
+const labelMap = new Map();
 const getSubject = async () => {
   // const res = await getProblemType("English"); //目前只有英语选项，等后面有其他学科了再获取subject值
   const res1 = await getTopInfo("range");
   // console.log(res.data.data);
   rangeData.value = res1.data.data;
-/*   for(let i in rangeData.value){
-    labelMap.set(rangeData.value[i].value,rangeData.value[i].label)
-  }
-  console.log('map',labelMap) */
+  /*   for(let i in rangeData.value){
+      labelMap.set(rangeData.value[i].value,rangeData.value[i].label)
+    }
+    console.log('map',labelMap) */
 
   // getRightChecked.initSubject(res.data.data)
 };
 
-
 const handleHidden = () => {
   emit("hiddenEvent");
 };
-onMounted(
-  () =>{
-    getSubject(),
-    getRightChecked.initSubject()
-  } 
-  );
-
+onMounted(() => {
+  getSubject(), getRightChecked.initSubject();
+});
 </script>
 
 <template>
@@ -80,15 +92,29 @@ onMounted(
       "
     >
       <div>
-        <el-icon @click="handleHidden" style="margin-left: 0.42vw"><CaretLeft /></el-icon>
+        <el-icon @click="handleHidden" style="margin-left: 0.42vw">
+          <CaretLeft />
+        </el-icon>
       </div>
-      <div style="font-weight: 600; margin-left: 0.2vw;color: black">基础筛选</div>
+      <div style="font-weight: 600; margin-left: 0.2vw; color: black">
+        基础筛选
+      </div>
     </div>
-    <el-form :model="form" :rules="rules" ref="formRef" @change="getCheckedL" style="padding-top: 2vh;">
+    <el-form
+      :model="form"
+      :rules="rules"
+      ref="formRef"
+      @change="getCheckedL"
+      style="padding-top: 2vh"
+    >
       <el-form-item prop="question" label="题型类型：">
         <el-radio-group v-model="form.question">
           <!-- {{ item.genre }} -->
-          <el-radio v-for="item in getRightChecked.ProblemTypeData" :key="item.value" :label="item.genre">
+          <el-radio
+            v-for="item in getRightChecked.ProblemTypeData"
+            :key="item.value"
+            :label="item.genre"
+          >
             <el-popover
               placement="bottom"
               trigger="click"
@@ -115,7 +141,7 @@ onMounted(
       <el-form-item prop="difficulty" label="难度选择：">
         <el-radio-group v-model="form.difficulty">
           <el-radio label="0">不限</el-radio>
-          <el-radio label="1">容易</el-radio> 
+          <el-radio label="1">容易</el-radio>
           <!-- <el-radio :label="容易" :value="1">容易</el-radio> -->
           <el-radio label="2">较易</el-radio>
           <el-radio label="3">适中</el-radio>
@@ -132,9 +158,12 @@ onMounted(
       </el-form-item>
       <el-form-item prop="scope" label="考核范围：">
         <el-radio-group v-model="form.scope">
-          <el-radio v-for="item in rangeData" :key="item.value" :label="item.value">{{
-            item.label
-          }}</el-radio>
+          <el-radio
+            v-for="item in rangeData"
+            :key="item.value"
+            :label="item.value"
+            >{{ item.label }}</el-radio
+          >
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -166,7 +195,7 @@ onMounted(
   padding-bottom: 0;
   margin: 0;
 }
-.el-radio__input.is-checked+.el-radio__label{
-  color:#6666FF;
+.el-radio__input.is-checked + .el-radio__label {
+  color: #6666ff;
 }
 </style>

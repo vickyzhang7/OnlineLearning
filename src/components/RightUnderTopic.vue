@@ -1,100 +1,125 @@
 <template>
-  <slot>
-    <div style="margin-top: 10.7vh; text-align: center">
-      <!-- 左侧选择框获得的数据 -->
-      <el-tag
-        v-for="tag in getRightUnderChecked.checkedArr"
-        :key="tag"
-        class="mx-1 tagStyle"
-        closable
-        :disable-transitions="false"
-        @close="getRightUnderChecked.handleClose(tag)"
-        type="info"
-      >
-        {{ tag }}
-      </el-tag>
-      <!-- 右上基础筛选 -->
-      <el-tag
-        v-for="tag in getRightUnderChecked.tagArrTop"
-        :key="tag"
-        class="mx-1 tagStyle"
-        closable
-        :disable-transitions="false"
-        @close="getRightUnderChecked.handleClose1(tag)"
-        type="info"
-      > 
-        {{ tag }}
-      </el-tag>
-    </div>
+  <div>
+    <slot>
+      <div style="margin-top: 10.7vh; text-align: center">
+        <!-- 左侧选择框获得的数据 -->
+        <el-tag
+          v-for="tag in getRightUnderChecked.checkedArr"
+          :key="tag"
+          class="mx-1 tagStyle"
+          closable
+          :disable-transitions="false"
+          @close="getRightUnderChecked.handleClose(tag)"
+          type="info"
+        >
+          {{ tag }}
+        </el-tag>
+        <!-- 右上基础筛选 -->
+        <el-tag
+          v-for="tag in getRightUnderChecked.tagArrTop"
+          :key="tag"
+          class="mx-1 tagStyle"
+          closable
+          :disable-transitions="false"
+          @close="getRightUnderChecked.handleClose1(tag)"
+          type="info"
+        >
+          {{ tag }}
+        </el-tag>
+      </div>
 
-    <div class="mt-4 searchGen" v-if="isShow">
-      <el-input v-model="input2" placeholder="请输入生成题目的关键词" class="inputGen">
-        <template #append>
-          <el-button class="buttonSet" @click="generateHandle">{{
-            getRightUnderChecked.isLoading ? "取消生成" : "开始生成"
-          }}</el-button>
-          <div class="loaddingCon" :class="{ hiddenf: !getRightUnderChecked.isLoading }">
-            <div ref="loaddingBar" class="loadding"></div>
-          </div>
-        </template>
-      </el-input>
-      <!-- <div class="loadding"></div> -->
-    </div>
-    <div class="loadding-img" v-if="getRightUnderChecked.isLoading">
-      <img src="../assets/loaddingImg.svg" style="width: 16.7vw; height: 17vh" />
-      <div class="loadding-content">
-        <p>生成中...</p>
-      <!--   <p style="
+      <div class="mt-4 searchGen" v-if="isShow">
+        <el-input
+          v-model="input2"
+          placeholder="请输入生成题目的关键词"
+          class="inputGen"
+        >
+          <template #append>
+            <el-button class="buttonSet" @click="generateHandle">{{
+              getRightUnderChecked.isLoading ? "取消生成" : "开始生成"
+            }}</el-button>
+            <div
+              class="loaddingCon"
+              :class="{ hiddenf: !getRightUnderChecked.isLoading }"
+            >
+              <div ref="loaddingBar" class="loadding"></div>
+            </div>
+          </template>
+        </el-input>
+        <!-- <div class="loadding"></div> -->
+      </div>
+      <div class="loadding-img" v-if="getRightUnderChecked.isLoading">
+        <img
+          src="../assets/loaddingImg.svg"
+          style="width: 16.7vw; height: 17vh"
+        />
+        <div class="loadding-content">
+          <p>生成中...</p>
+          <!--   <p style="
         font-family: 'PingFang SC';
         font-style: normal;
         font-weight: 500;
         font-size: 14px;
         line-height: 20px;
         width: 100px;
-      ">我这一生，很有可能继续孤独下去。对于v那些我最亲近的人，我对他们的认识从来都是对着镜子观看模糊不清。我用我的生命在作画，而我的的生命已经耗费了一半。在想象中同你握手。————文森特·梵高</p>
+      "></p>
      -->
+        </div>
       </div>
-    </div>
-     <!-- 下面是生成提示弹窗 -->
-    <el-dialog
-      :modal="false"
-      v-model="getRightUnderChecked.dialogVisible"
-      width="20.8vw"
-      :before-close="handleClose"
-      top="55vh"
-      class="dialogSet"
-    >
-      <div class="dialog-content">
-      
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12.3197 5C13.0378 5 13.62 5.56281 13.62 6.3003C13.62 7.05719 13.0378 7.62 12.3197 7.62C11.5822 7.62 11 7.05719 11 6.3003C11 5.56281 11.5822 5 12.3197 5ZM11.3215 18.9077V9.45629C11.3215 8.95169 11.7752 8.6994 12.2729 8.6994C12.7527 8.6994 13.2243 8.95169 13.2243 9.45629V18.9077C13.2243 19.4317 12.7527 19.684 12.2729 19.684C11.7752 19.684 11.3215 19.4317 11.3215 18.9077Z" fill="#6666FF"/>
-        </svg>
+      <!-- 下面是生成提示弹窗 -->
+      <el-dialog
+        :modal="false"
+        v-model="getRightUnderChecked.dialogVisible"
+        width="20.8vw"
+        :before-close="handleClose"
+        top="55vh"
+        class="dialogSet"
+      >
+        <div class="dialog-content">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12.3197 5C13.0378 5 13.62 5.56281 13.62 6.3003C13.62 7.05719 13.0378 7.62 12.3197 7.62C11.5822 7.62 11 7.05719 11 6.3003C11 5.56281 11.5822 5 12.3197 5ZM11.3215 18.9077V9.45629C11.3215 8.95169 11.7752 8.6994 12.2729 8.6994C12.7527 8.6994 13.2243 8.95169 13.2243 9.45629V18.9077C13.2243 19.4317 12.7527 19.684 12.2729 19.684C11.7752 19.684 11.3215 19.4317 11.3215 18.9077Z"
+              fill="#6666FF"
+            />
+          </svg>
 
-        <span>生成中</span>
-      </div>
-      <p class="dialog-p">点击右上角符号进行多项业务同步生成同时查看同步生成的所有业务</p>
-      <div class="bar"></div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button
-            class="set-other-btn2"
-            @click="getRightUnderChecked.setDialogVisibleFlase()"
-            >在当前生成页面等待</el-button
-          >
-          <el-button class="set-other-btn1" @click="getRightUnderChecked.setDialogVisibleFlase()"
-            >同步生成</el-button
-          >
-        </span>
-      </template>
-    </el-dialog>
-  </slot>
-   
+          <span>生成中</span>
+        </div>
+        <p class="dialog-p">
+          点击右上角符号进行多项业务同步生成同时查看同步生成的所有业务
+        </p>
+        <div class="bar"></div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button
+              class="set-other-btn2"
+              @click="getRightUnderChecked.setDialogVisibleFlase()"
+              >在当前生成页面等待</el-button
+            >
+            <el-button
+              class="set-other-btn1"
+              @click="getRightUnderChecked.setDialogVisibleFlase()"
+              >同步生成</el-button
+            >
+          </span>
+        </template>
+      </el-dialog>
+    </slot>
+  </div>
 </template>
 
 <script setup>
 import { getCheckedStore } from "@/stores";
 import { ref } from "vue";
-import mitter from '@/utils/eventBus'
+import mitter from "@/utils/eventBus";
 import { onMounted } from "vue";
 const getRightUnderChecked = getCheckedStore();
 const step = ref(5); //进度条
@@ -138,10 +163,10 @@ const startLoading = () => {
     }
   });
 };
-mitter.on('progress', startLoading()) //兄弟传值
+mitter.on("progress", startLoading()); //兄弟传值
 
-
-
+// #修改阅读部门
+defineExpose({ generateHandle });
 // const res = mapDiffValue(getRightUnderChecked.checkedArr1[3])
 /* setInterval(()=>
 {
@@ -253,10 +278,11 @@ mitter.on('progress', startLoading()) //兄弟传值
     font-weight: 700;
   }
 }
-.el-icon svg{
-    display: none;
-  }
-.dialogSet{ //弹窗
+.el-icon svg {
+  display: none;
+}
+.dialogSet {
+  //弹窗
   position: absolute;
   left: 46vw;
   top: 4vh;

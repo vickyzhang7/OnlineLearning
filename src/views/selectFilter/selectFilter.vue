@@ -1,15 +1,16 @@
 <!-- 蒙版okkk -->
 <!-- 11 -->
 <script setup>
-import { ref, onMounted,computed } from "vue";
+import { ref, onMounted, computed, nextTick } from "vue";
 import LeftTopic from "../../components/LeftTopic.vue";
 import RightTopTopic from "../../components/RightTopTopic.vue";
 import RightUnderTopic from "../../components/RightUnderTopic.vue";
+import RightGenerateTopic from "../../components/RightGenerateTopic.vue";
 import ProblemShow from "../../components/ProblemShow.vue";
 import { getCheckedStore } from "@/stores";
 import { getTopInfo } from "../../api/selectFilter";
 import BagProblemSet from "../../components/BagProblemSet.vue";
-import QuestionPaperOverlay from '../../components/QuestionPaperOverlay.vue';
+import QuestionPaperOverlay from "../../components/QuestionPaperOverlay.vue";
 
 const value = ref("");
 const value1 = ref("");
@@ -20,7 +21,7 @@ const value4 = ref("");
 const isChangePageShow = ref(false);
 const showOverlay = ref(false);
 const showQuestionPaper = ref(false);
-const questions = ref([]); 
+const questions = ref([]);
 const handleOverlayToggle = (show) => {
   showOverlay.value = show;
   showQuestionPaper.value = show;
@@ -87,7 +88,8 @@ const optionsVolume = [
     label2: "下册",
   },
 ];
-
+//定义数据传递给右下
+const themeData = ref([]);
 
 const underLeft = ref();
 const rightTop = ref();
@@ -101,7 +103,7 @@ const getInfo = () => {
   infoArr.forEach(async (item) => {
     const res = await getTopInfo(item);
     options.value[item] = res.data.data;
-    console.log('infoarr',options.value);
+    console.log("infoarr", options.value);
   });
 };
 // 左侧隐藏
@@ -117,11 +119,20 @@ const handleTop = () => {
   // console.log(underLeft.value.style);
   rightTop.value.style.height = 0;
   rightTop.value.style.overflow = "hidden";
-  rightTop.value.style.margin=0;
+  rightTop.value.style.margin = 0;
 };
 // +号按钮操作
 const changePage = () => {
   isChangePageShow.value = !isChangePageShow.value; //是否显示菜单
+};
+
+const isOpenBottom = ref(false);
+//#修改阅读部门 选择阅读选择的时候出现替换为右下
+const openBottom = () => {
+  isOpenBottom.value = true;
+};
+const closeBottom = () => {
+  isOpenBottom.value = false;
 };
 
 // 只有一个的处理
@@ -145,18 +156,31 @@ const changeHandle = (mode) => {
 // 有多个的处理
 const mutiChangeHandle = (generateId) => {
   getTopChecked.isShow = false;
-  let len = getTopChecked.totalGenerationProblem.length
-  for(let i = 0; i < len; i++) {
-    if(getTopChecked.totalGenerationProblem[i].generateId === generateId) {
-      getTopChecked.currentItem = i
-      break
+  let len = getTopChecked.totalGenerationProblem.length;
+  for (let i = 0; i < len; i++) {
+    if (getTopChecked.totalGenerationProblem[i].generateId === generateId) {
+      getTopChecked.currentItem = i;
+      break;
     }
   }
-}
+};
+const saveRef = ref(null);
+const submitLeft = () => {
+  isOpenBottom.value = false;
+  console.log("生成111");
+  nextTick(() => {
+    saveRef.value.generateHandle();
+  });
+};
+// 获取组件传递的主题
+const getThemeData = (event) => {
+  console.log(event, "回传数据");
+  themeData.value = event;
+};
 
 // #修改
 const userBagList = computed(() => {
-  return getTopChecked.userBagList
+  return getTopChecked.userBagList;
 });
 // #修改
 
@@ -171,7 +195,10 @@ onMounted(() => {
 <template>
   <div class="selectAll">
     <div class="content">
-      <img src="../../assets/position.svg" style="width: 1.93vw; height: 2.92vh" />
+      <img
+        src="../../assets/position.svg"
+        style="width: 1.93vw; height: 2.92vh"
+      />
       <el-select
         v-model="value"
         @change="getTopChecked.getRegion(value)"
@@ -203,12 +230,16 @@ onMounted(() => {
     </div>
 
     <div class="content">
-      <img src="../../assets/volume.svg" style="width: 1.84vw; height: 2.89vh" />
-      <el-select 
-      v-model="value2" 
-      class="m-2 select1" 
-      placeholder="请选择上下册"
-      @change = "getTopChecked.getGenre(value2)">
+      <img
+        src="../../assets/volume.svg"
+        style="width: 1.84vw; height: 2.89vh"
+      />
+      <el-select
+        v-model="value2"
+        class="m-2 select1"
+        placeholder="请选择上下册"
+        @change="getTopChecked.getGenre(value2)"
+      >
         <el-option
           v-for="item in optionsVolume"
           :key="item.value2"
@@ -234,7 +265,10 @@ onMounted(() => {
     </div>
 
     <div class="content">
-      <img src="../../assets/version.svg" style="width: 1.92vw; height: 2.79vh" />
+      <img
+        src="../../assets/version.svg"
+        style="width: 1.92vw; height: 2.79vh"
+      />
       <el-select
         v-model="value4"
         @change="getTopChecked.getTextbook(value4)"
@@ -256,49 +290,80 @@ onMounted(() => {
         src="../../assets/addButton.svg"
         style="width: 2.08vw; height: 3.7vh"
       />
-      <div class="addLarge" v-show="getTopChecked.isLoading" @click="changePage">
-        <img src="../../assets/addLargeButton.svg" style="width: 5.2vw; height: 9.2vh" />
+      <div
+        class="addLarge"
+        v-show="getTopChecked.isLoading"
+        @click="changePage"
+      >
+        <img
+          src="../../assets/addLargeButton.svg"
+          style="width: 5.2vw; height: 9.2vh"
+        />
       </div>
-    <div>
-      <!-- 加号按钮点击后的菜单：仅有当前生成界面 -->
+      <div>
+        <!-- 加号按钮点击后的菜单：仅有当前生成界面 -->
         <div
           class="first-show"
-          v-show="isChangePageShow && getTopChecked.totalGenerationProblem.length === 1"
+          v-show="
+            isChangePageShow &&
+            getTopChecked.totalGenerationProblem.length === 1
+          "
         >
           <p class="first-show-item active" @click.stop="changeHandle('')">
             {{ getTopChecked.totalGenerationProblem[0]?.title }}
           </p>
-          <p class="first-show-item" @click.stop="changeHandle('add')">新增生成页面</p>  
-        </div>  
-      <!-- 加号按钮点击后的菜单：有多个生成界面 -->
+          <p class="first-show-item" @click.stop="changeHandle('add')">
+            新增生成页面
+          </p>
+        </div>
+        <!-- 加号按钮点击后的菜单：有多个生成界面 -->
         <div
           class="else-show"
-          v-show="isChangePageShow && getTopChecked.totalGenerationProblem.length > 1"
+          v-show="
+            isChangePageShow && getTopChecked.totalGenerationProblem.length > 1
+          "
         >
           <p
             class="else-show-item"
             v-for="item in getTopChecked.totalGenerationProblem"
             :key="item.generateId"
             @click="mutiChangeHandle(item.generateId)"
-            :class="{'active': getTopChecked.totalGenerationProblem[getTopChecked.currentItem].generateId === item.generateId}"
+            :class="{
+              active:
+                getTopChecked.totalGenerationProblem[getTopChecked.currentItem]
+                  .generateId === item.generateId,
+            }"
           >
             {{ item.title }}
           </p>
-          <p class="else-show-item" v-show="getTopChecked.totalGenerationProblem.length < 5" @click.stop="changeHandle('add')">新增生成页面</p>
+          <p
+            class="else-show-item"
+            v-show="getTopChecked.totalGenerationProblem.length < 5"
+            @click.stop="changeHandle('add')"
+          >
+            新增生成页面
+          </p>
         </div>
       </div>
     </div>
-    
   </div>
   <div class="under">
     <div class="underLeft" ref="underLeft">
-     
-      <left-topic @hiddenEventL = "handleLeft"></left-topic>
+      <left-topic
+        @hiddenEventL="handleLeft"
+        @transfer="getThemeData"
+        :isOpenBottom="isOpenBottom"
+      ></left-topic>
       <!-- 插槽 -->
     </div>
     <div class="underRight">
       <div class="underRight1" ref="rightTop">
-        <right-top-topic @hiddenEvent="handleTop"></right-top-topic>
+        <!-- #修改阅读部门 -->
+        <right-top-topic
+          @hiddenEvent="handleTop"
+          @openBottom="openBottom"
+          @closeBottom="closeBottom"
+        ></right-top-topic>
         <!-- 插槽 -->
       </div>
       <div class="underRight2">
@@ -312,64 +377,99 @@ onMounted(() => {
           "
         >
           <div>
-            <el-icon style="margin-left: 0.42vw"><CaretLeft /></el-icon>
+            <el-icon style="margin-left: 0.42vw">
+              <CaretLeft />
+            </el-icon>
           </div>
-          <div style="font-weight: 600; margin-left: 0.2vw;width: 49vw;color: black">生成题目</div>
-          <div style="font-weight: 600; margin-left: 0.2vw;color: black" v-show="!getTopChecked.isShow">题目分析</div>
+          <div
+            style="
+              font-weight: 600;
+              margin-left: 0.2vw;
+              width: 49vw;
+              color: black;
+            "
+          >
+            生成题目
+          </div>
+          <div
+            style="font-weight: 600; margin-left: 0.2vw; color: black"
+            v-show="!getTopChecked.isShow"
+          >
+            题目分析
+          </div>
           <!-- 右下模块的切换按钮 -->
           <div>
             <img
               src="../../assets/beforeSwitch.svg"
               @click="changePage"
-               v-show="!getTopChecked.isLoading"
+              v-show="!getTopChecked.isLoading"
               style="position: absolute; right: 1vw; top: 1vh"
             />
-            <div class="addLarge" v-show="getTopChecked.isLoading" @click="changePage">
-              <img src="../../assets/switch.svg" style="position: absolute; right: 1vw; top: 1vh"/>
+            <div
+              class="addLarge"
+              v-show="getTopChecked.isLoading"
+              @click="changePage"
+            >
+              <img
+                src="../../assets/switch.svg"
+                style="position: absolute; right: 1vw; top: 1vh"
+              />
             </div>
           </div>
         </div>
-        <right-under-topic v-if="getTopChecked.isShow"></right-under-topic>
+        <!-- #修改阅读部门 -->
+        <template v-if="getTopChecked.isShow">
+          <right-under-topic
+            ref="saveRef"
+            :class="!isOpenBottom ? '' : 'top999'"
+          ></right-under-topic>
+          <right-generate-topic
+            :theme="themeData"
+            @submit="submitLeft"
+            v-if="isOpenBottom"
+          ></right-generate-topic>
+        </template>
         <ProblemShow v-else></ProblemShow>
         <!-- 插槽 -->
         <!-- <el-button @click="change">ff</el-button> -->
       </div>
       <!-- 锁购物袋设计：拖拽悬浮 -->
-      <div style="position: absolute;display: inline-block;right: 0;" draggable='true' v-if="getTopChecked.isBag">
-         <img
-          class="dragImg"
-          src="../../assets/lockbag.svg"
-          alt=""
-      />
-      </div>
-      <div style="position: absolute;display: inline-block;right: 0;" draggable='true' @click="getTopChecked.handelBag()" v-else>
-         <img
-          class="dragImg"
-          src="../../assets/usebag.svg"
-          alt=""
-      />
-      <!-- 购物袋小红点 -->
-      <!-- #修改 -->
       <div
-						v-show="userBagList.length"
-						class="fz"
-						:class="[userBagList.length > 9 ? 'rectangle' : 'circle']"
-					>
-						{{ userBagList.length }}
+        style="position: absolute; display: inline-block; right: 0"
+        draggable="true"
+        v-if="getTopChecked.isBag"
+      >
+        <img class="dragImg" src="../../assets/lockbag.svg" alt="" />
       </div>
+      <div
+        style="position: absolute; display: inline-block; right: 0"
+        draggable="true"
+        @click="getTopChecked.handelBag()"
+        v-else
+      >
+        <img class="dragImg" src="../../assets/usebag.svg" alt="" />
+        <!-- 购物袋小红点 -->
+        <!-- #修改 -->
+        <div
+          v-show="userBagList.length"
+          class="fz"
+          :class="[userBagList.length > 9 ? 'rectangle' : 'circle']"
+        >
+          {{ userBagList.length }}
+        </div>
       </div>
-       
     </div>
   </div>
   <!-- 袋子题库 -->
-  <div class="overlay" v-show="showOverlay"></div> <!-- 蒙版元素 -->
+  <div class="overlay" v-show="showOverlay"></div>
+  <!-- 蒙版元素 -->
   <question-paper-overlay
-  v-if="showQuestionPaper"
-  :questions="questions"
-  @toggle-overlay="handleOverlayToggle"
+    v-if="showQuestionPaper"
+    :questions="questions"
+    @toggle-overlay="handleOverlayToggle"
   />
-  <bag-problem-set 
-    v-show="getTopChecked.isBagProblemSet" 
+  <bag-problem-set
+    v-show="getTopChecked.isBagProblemSet"
     @toggle-overlay="handleOverlayToggle"
   ></bag-problem-set>
 
@@ -379,9 +479,12 @@ onMounted(() => {
       <button @click="showModal = false">确定</button>
     </div>
   </div>
-
 </template>
 <style lang="scss" scoped>
+.top999 {
+  position: fixed;
+  top: 9999px;
+}
 .selectAll {
   display: flex;
   justify-content: space-around;
@@ -398,7 +501,7 @@ onMounted(() => {
     }
     .first-show {
       z-index: 9999;
-      color: #000;
+      color: #4f4f4f;
       font-size: 0.73vw;
       width: 8.5vw;
       position: absolute;
@@ -420,7 +523,7 @@ onMounted(() => {
     }
     .else-show {
       z-index: 9999;
-      color: #000;
+      color: #4f4f4f;
       font-size: 0.73vw;
       width: 8.5vw;
       position: absolute;
@@ -444,7 +547,6 @@ onMounted(() => {
 }
 .content {
   display: flex;
-
 }
 .select1 {
   margin-left: 0.3vw;
@@ -454,11 +556,10 @@ onMounted(() => {
   border: 1px solid #6666ff;
 }
 
-
 .el-select {
   --el-select-input-focus-border-color: #6666ff;
 }
- .el-input {
+.el-input {
   --el-input-placeholder-color: #6666ff;
   --el-input-text-color: #6666ff;
 }
@@ -475,70 +576,68 @@ onMounted(() => {
   margin-top: 2.96vh;
   border-radius: 1vw 1vw 1vw 1vw;
   .underLeft {
-  height: 100%;
-  width: 20%;
-  background-color: white;
-  border-radius: 1vw 1vw 1vw 1vw;
-  margin-left: 1vw;
-  margin-right: 0.5vw;
-  overflow:auto;
-}
-.underRight {
-  height: 100%;
-  width: 70%;
-  border-radius: 1vw 1vw 1vw 1vw;
-  flex: 1;
-  margin-right: 1vw;
-  margin-left: 0.5vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  // align-items: center;
-  .underRight1 {
-  background-color: white;
-  // width: 82.29vw;
-  height: 24vh;
-  border-radius: 1vw 1vw 1vw 1vw;
-  margin-bottom: 1.77vh;
-  overflow: scroll;
-  }
-  .underRight2 {
-    position: relative;
-    background-color: rgba(255, 255, 255, 0.5);
-    // margin-top: 1.77vh;
-    // width: 82.29vw;
     height: 100%;
+    width: 20%;
+    background-color: white;
+    border-radius: 1vw 1vw 1vw 1vw;
+    margin-left: 1vw;
+    margin-right: 0.5vw;
+    overflow: auto;
+  }
+  .underRight {
+    height: 100%;
+    width: 70%;
     border-radius: 1vw 1vw 1vw 1vw;
     flex: 1;
-    // overflow: auto;
-    
-  }
-.dragImg {
-position:absolute;
-right:0;
-}
-.fz {
-    position: relative;
-    display: inline-block;
+    margin-right: 1vw;
+    margin-left: 0.5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    // align-items: center;
+    .underRight1 {
+      background-color: white;
+      // width: 82.29vw;
+      height: 24vh;
+      border-radius: 1vw 1vw 1vw 1vw;
+      margin-bottom: 1.77vh;
+      overflow: scroll;
+    }
+    .underRight2 {
+      position: relative;
+      background-color: rgba(255, 255, 255, 0.5);
+      // margin-top: 1.77vh;
+      // width: 82.29vw;
+      height: 100%;
+      border-radius: 1vw 1vw 1vw 1vw;
+      flex: 1;
+      // overflow: auto;
+    }
+    .dragImg {
+      position: absolute;
+      right: 0;
+    }
+    .fz {
+      position: relative;
+      display: inline-block;
       right: 19px;
       width: 35px;
       height: 35px;
       line-height: 35px;
       text-align: center;
-      color: #FFFFFF;
-      background: #FE3A46;
-        &.rectangle {
-            padding: 8px;
-            border-radius: 16px;
-            }
-        &.circle {
-            border-radius: 50%;
-            }
+      color: #ffffff;
+      background: #fe3a46;
+      &.rectangle {
+        padding: 8px;
+        border-radius: 16px;
+      }
+      &.circle {
+        border-radius: 50%;
+      }
     }
+  }
 }
+body {
+  color: #4f4f4f;
 }
-body{
-  color: #000;
-}
-
 </style>
