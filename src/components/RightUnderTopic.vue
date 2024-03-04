@@ -28,27 +28,40 @@
         </el-tag>
       </div>
 
-      <div class="mt-4 searchGen" v-if="isShow">
+      <div
+        class="mt-4 searchGen"
+        v-if="isShow"
+      >
         <el-input
           v-model="input2"
           placeholder="请输入生成题目的关键词"
           class="inputGen"
         >
           <template #append>
-            <el-button class="buttonSet" @click="generateHandle">{{
+            <el-button
+              class="buttonSet"
+              @click="generateHandle"
+            >{{
               getRightUnderChecked.isLoading ? "取消生成" : "开始生成"
             }}</el-button>
             <div
               class="loaddingCon"
               :class="{ hiddenf: !getRightUnderChecked.isLoading }"
             >
-              <div ref="loaddingBar" class="loadding"></div>
+              <div
+                ref="loaddingBar"
+                class="loadding"
+              ></div>
             </div>
           </template>
         </el-input>
         <!-- <div class="loadding"></div> -->
       </div>
-      <div class="loadding-img" v-if="getRightUnderChecked.isLoading">
+      <!-- 图片居中 -->
+      <div
+        class="loadding-img"
+        v-if="getRightUnderChecked.isLoading"
+      >
         <img
           src="../assets/loaddingImg.svg"
           style="width: 16.7vw; height: 17vh"
@@ -102,13 +115,11 @@
             <el-button
               class="set-other-btn2"
               @click="getRightUnderChecked.setDialogVisibleFlase()"
-              >在当前生成页面等待</el-button
-            >
+            >在当前生成页面等待</el-button>
             <el-button
               class="set-other-btn1"
               @click="getRightUnderChecked.setDialogVisibleFlase()"
-              >同步生成</el-button
-            >
+            >同步生成</el-button>
           </span>
         </template>
       </el-dialog>
@@ -121,6 +132,8 @@ import { getCheckedStore } from "@/stores";
 import { ref } from "vue";
 import mitter from "@/utils/eventBus";
 import { onMounted } from "vue";
+// #修改隐藏头部
+const emit = defineEmits();
 const getRightUnderChecked = getCheckedStore();
 const step = ref(5); //进度条
 let timer = ref(0);
@@ -130,12 +143,15 @@ const isShow = ref(true);
 
 const generateHandle = () => {
   if (!getRightUnderChecked.isLoading) {
+    // #修改隐藏头部
+    emit("hiddenTop");
     getRightUnderChecked.isLarge = true;
     getRightUnderChecked.generateClick(input2.value); //生成题目
     // console.log(step.value);
     step.value = 5;
     startLoading();
   } else {
+    emit("showTop");
     getRightUnderChecked.generateProblemCancel();
     window.cancelAnimationFrame(timer.value);
   }
@@ -160,6 +176,8 @@ const startLoading = () => {
       // endLoading()
       // 动画完成，清除requestAnimationFrame
       window.cancelAnimationFrame(timer.value);
+      // #修改隐藏头部
+      emit("showTop");
     }
   });
 };
@@ -316,15 +334,25 @@ defineExpose({ generateHandle });
 }
 .loadding-img {
   position: absolute;
-  left: 26vw;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  left: 0vw;
   top: 26vh;
   .loadding-content {
     position: absolute;
-    left: 6vw;
+    // left: 6vw;
     top: 16.5vh;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
     p {
       font-size: 0.5vw;
-      margin-left: 3vw;
+      // margin-left: 3vw;
+      width: 100%;
+      text-align: center;
       color: #737373;
     }
   }

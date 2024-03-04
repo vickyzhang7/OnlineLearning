@@ -1,8 +1,15 @@
 <template>
   <div class="big-box">
     <div class="flex-box">
-      <el-form :model="form" label-width="60px">
-        <el-form-item label="主题" style="margin-top: 5px; align-items: flex-end;">
+      <el-form
+        :model="form"
+        label-width="60px"
+      >
+
+        <el-form-item
+          label="主题"
+          style="margin-top: 5px; align-items: flex-end"
+        >
           <el-select
             v-model="form.theme"
             class="name-ipt"
@@ -19,7 +26,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="字数">
+        <el-form-item
+          label="字数"
+          v-if="!props.select"
+        >
           <el-radio-group v-model="form.wordsNum">
             <el-radio label="1">100以下</el-radio>
             <el-radio label="2">100~200</el-radio>
@@ -30,7 +40,10 @@
             <el-radio label="7">800~1000</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="题干">
+        <el-form-item
+          label="题干"
+          v-if="!props.select"
+        >
           <div class="flex-ipt-num">
             <span class="stem_style1"> 推断题 </span>
             <el-input-number
@@ -92,46 +105,126 @@
             />
           </div>
         </el-form-item>
-        <el-form-item label="文体">
-          <el-radio-group v-model="form.writing" style="width: 610px">
-            <el-radio class="round" label="1" size="small">记叙文</el-radio>
-            <el-radio class="round" label="2" size="small">议论文</el-radio>
-            <el-radio class="round" label="3" size="small">说明文</el-radio>
-            <el-radio class="round" label="4" size="small">应用文</el-radio>
-            <el-radio class="round" label="5" size="small">新闻</el-radio>
-            <el-radio class="round" label="6" size="small">广告</el-radio>
-            <el-radio class="round" label="7" size="small">信件</el-radio>
-            <el-radio class="round" label="8" size="small">操作说明</el-radio>
+        <el-form-item
+          label="文体"
+          v-if="!props.select"
+        >
+          <el-radio-group
+            v-model="form.writing"
+            style="width: 610px"
+          >
+            <el-radio
+              class="round"
+              label="1"
+              size="small"
+            >记叙文</el-radio>
+            <el-radio
+              class="round"
+              label="2"
+              size="small"
+            >议论文</el-radio>
+            <el-radio
+              class="round"
+              label="3"
+              size="small"
+            >说明文</el-radio>
+            <el-radio
+              class="round"
+              label="4"
+              size="small"
+            >应用文</el-radio>
+            <el-radio
+              class="round"
+              label="5"
+              size="small"
+            >新闻</el-radio>
+            <el-radio
+              class="round"
+              label="6"
+              size="small"
+            >广告</el-radio>
+            <el-radio
+              class="round"
+              label="7"
+              size="small"
+            >信件</el-radio>
+            <el-radio
+              class="round"
+              label="8"
+              size="small"
+            >操作说明</el-radio>
             <el-radio
               class="round"
               style="margin-right: 0"
               label="9"
               size="small"
-              >通知</el-radio
-            >
+            >通知</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="生词率">
           <el-radio-group v-model="form.wordRate">
-            <el-radio class="round" label="1" size="small">0%</el-radio>
-            <el-radio class="round" label="2" size="small">1%</el-radio>
-            <el-radio class="round" label="3" size="small">2%</el-radio>
-            <el-radio class="round" label="4" size="small">3%</el-radio>
-            <el-radio class="round" label="5" size="small">4%</el-radio>
-            <el-radio class="round" label="6" size="small">5%</el-radio>
+            <el-radio
+              class="round"
+              label="1"
+              size="small"
+            >0%</el-radio>
+            <el-radio
+              class="round"
+              label="2"
+              size="small"
+            >1%</el-radio>
+            <el-radio
+              class="round"
+              label="3"
+              size="small"
+            >2%</el-radio>
+            <el-radio
+              class="round"
+              label="4"
+              size="small"
+            >3%</el-radio>
+            <el-radio
+              class="round"
+              label="5"
+              size="small"
+            >4%</el-radio>
+            <el-radio
+              class="round"
+              label="6"
+              size="small"
+            >5%</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="词汇">
           <el-radio-group v-model="form.vocabulary">
-            <el-radio class="round" label="1" size="small">同义复现</el-radio>
-            <el-radio class="round" label="2" size="small">反义复现</el-radio>
-            <el-radio class="round" label="3" size="small">形近辨析</el-radio>
-            <el-radio class="round" label="4" size="small">暂无要求</el-radio>
+            <el-radio
+              class="round"
+              label="1"
+              size="small"
+            >同义复现</el-radio>
+            <el-radio
+              class="round"
+              label="2"
+              size="small"
+            >反义复现</el-radio>
+            <el-radio
+              class="round"
+              label="3"
+              size="small"
+            >形近辨析</el-radio>
+            <el-radio
+              class="round"
+              label="4"
+              size="small"
+            >暂无要求</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
           <div class="bottom-box">
-            <el-button class="buttonSet" @click="onSubmit">开始生成</el-button>
+            <el-button
+              class="buttonSet"
+              @click="onSubmit"
+            >开始生成</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -140,7 +233,7 @@
 </template>
 <script setup>
 import { ref } from "vue";
-const props = defineProps(["theme"]);
+const props = defineProps(["theme", "select"]);
 const emit = defineEmits();
 const form = ref({
   theme: null,
@@ -160,19 +253,17 @@ const onSubmit = () => {
 </script>
 
 <style lang="scss" scoped>
-
 .stem_style {
   margin-left: 10px;
   margin-right: 5px;
-  color: #4F4F4F;
+  color: #4f4f4f;
   font-family: PingFang SC;
   font-size: 12px;
 }
 
 .stem_style1 {
-
   margin-right: 5px;
-  color: #4F4F4F;
+  color: #4f4f4f;
   font-family: PingFang SC;
   font-size: 12px;
 }
@@ -227,13 +318,21 @@ const onSubmit = () => {
   z-index: 1;
   top: 2px;
 }
-:deep(.el-input-number__decrease:hover ~ .el-input:not(.is-disabled) .el-input__wrapper) {
+:deep(
+    .el-input-number__decrease:hover
+      ~ .el-input:not(.is-disabled)
+      .el-input__wrapper
+  ) {
   box-shadow: none !important;
 }
 :deep(.el-select:hover:not(.el-select--disabled) .el-input__wrapper) {
   box-shadow: none !important;
 }
-:deep(.el-input-number__increase:hover ~ .el-input:not(.is-disabled) .el-input__wrapper) {
+:deep(
+    .el-input-number__increase:hover
+      ~ .el-input:not(.is-disabled)
+      .el-input__wrapper
+  ) {
   box-shadow: none !important;
 }
 :deep(.el-radio__label) {
@@ -280,7 +379,7 @@ const onSubmit = () => {
     height: 25px;
   }
   .bottom-box {
-    margin-top: -10px;  
+    margin-top: -10px;
     margin-bottom: -10px;
     width: 100%;
     display: flex;
@@ -294,6 +393,4 @@ const onSubmit = () => {
     }
   }
 }
-
-
 </style>

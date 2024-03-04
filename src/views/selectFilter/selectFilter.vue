@@ -130,9 +130,72 @@ const isOpenBottom = ref(false);
 //#修改阅读部门 选择阅读选择的时候出现替换为右下
 const openBottom = () => {
   isOpenBottom.value = true;
+  isSelect.value = false;
+  console.log(isSelect.value, '传递值');
+};
+//#词汇单项选择
+const isSelect = ref(false);
+const openBottomTwo = () => {
+  isOpenBottom.value = true;
+  isSelect.value = true;
+  console.log(isSelect.value, '传递值');
 };
 const closeBottom = () => {
   isOpenBottom.value = false;
+};
+// 拖拽2
+const image = ref(null);
+const images = ref(null);
+const imgWrap = ref(null);
+const moveImg = (e) => {
+  let wrap = imgWrap.value;
+  let img = image.value;
+  let x = e.pageX - img.offsetLeft;
+  let y = e.pageY - img.offsetTop;
+  // 添加鼠标移动事件
+  wrap.addEventListener("mousemove", move);
+  function move(e) {
+    img.style.right = "none";
+    img.style.left = e.pageX - x + "px";
+    img.style.top = e.pageY - y + "px";
+  }
+  // 添加鼠标抬起事件，鼠标抬起，将事件移除
+  img.addEventListener("mouseup", () => {
+    wrap.removeEventListener("mousemove", move);
+  });
+  // 鼠标离开父级元素，把事件移除
+  wrap.addEventListener("mouseout", () => {
+    wrap.removeEventListener("mousemove", move);
+  });
+};
+const moveImgs = (e) => {
+  let wrap = imgWrap.value;
+  let img = images.value;
+  let x = e.pageX - img.offsetLeft;
+  let y = e.pageY - img.offsetTop;
+  // 添加鼠标移动事件
+  wrap.addEventListener("mousemove", move);
+  function move(e) {
+    img.style.right = "none";
+    img.style.left = e.pageX - x + "px";
+    img.style.top = e.pageY - y + "px";
+  }
+  // 添加鼠标抬起事件，鼠标抬起，将事件移除
+  img.addEventListener("mouseup", () => {
+    wrap.removeEventListener("mousemove", move);
+  });
+  // 鼠标离开父级元素，把事件移除
+  wrap.addEventListener("mouseout", () => {
+    wrap.removeEventListener("mousemove", move);
+  });
+};
+// #修改隐藏头部
+const topShow = ref(true);
+const hiddenTop = () => {
+  topShow.value = false;
+};
+const showTop = () => {
+  topShow.value = true;
 };
 
 // 只有一个的处理
@@ -210,11 +273,14 @@ onMounted(() => {
           :key="item.value"
           :label="item.label"
           :value="item.value"
-      /></el-select>
+        /></el-select>
     </div>
 
     <div class="content">
-      <img src="../../assets/grade.svg" style="width: 2.07vw; height: 2.93vh" />
+      <img
+        src="../../assets/grade.svg"
+        style="width: 2.07vw; height: 2.93vh"
+      />
       <el-select
         v-model="value1"
         @change="getTopChecked.getGrade(value1)"
@@ -226,7 +292,7 @@ onMounted(() => {
           :key="item.value1"
           :label="item.label1"
           :value="item.value1"
-      /></el-select>
+        /></el-select>
     </div>
 
     <div class="content">
@@ -245,11 +311,14 @@ onMounted(() => {
           :key="item.value2"
           :label="item.label2"
           :value="item.value2"
-      /></el-select>
+        /></el-select>
     </div>
 
     <div class="content">
-      <img src="../../assets/subject.svg" style="width: 1.92vw; height: 3vh" />
+      <img
+        src="../../assets/subject.svg"
+        style="width: 1.92vw; height: 3vh"
+      />
       <el-select
         v-model="value3"
         @change="getTopChecked.getSubject(value3)"
@@ -261,7 +330,7 @@ onMounted(() => {
           :key="item.value"
           :label="item.label"
           :value="item.value"
-      /></el-select>
+        /></el-select>
     </div>
 
     <div class="content">
@@ -280,7 +349,7 @@ onMounted(() => {
           :key="item.value"
           :label="item.label"
           :value="item.value"
-      /></el-select>
+        /></el-select>
     </div>
     <!-- 加号按钮 -->
     <div class="addButton">
@@ -309,10 +378,16 @@ onMounted(() => {
             getTopChecked.totalGenerationProblem.length === 1
           "
         >
-          <p class="first-show-item active" @click.stop="changeHandle('')">
+          <p
+            class="first-show-item active"
+            @click.stop="changeHandle('')"
+          >
             {{ getTopChecked.totalGenerationProblem[0]?.title }}
           </p>
-          <p class="first-show-item" @click.stop="changeHandle('add')">
+          <p
+            class="first-show-item"
+            @click.stop="changeHandle('add')"
+          >
             新增生成页面
           </p>
         </div>
@@ -348,7 +423,11 @@ onMounted(() => {
     </div>
   </div>
   <div class="under">
-    <div class="underLeft" ref="underLeft">
+    <div
+      class="underLeft"
+      v-if="topShow"
+      ref="underLeft"
+    >
       <left-topic
         @hiddenEventL="handleLeft"
         @transfer="getThemeData"
@@ -356,39 +435,43 @@ onMounted(() => {
       ></left-topic>
       <!-- 插槽 -->
     </div>
-    <div class="underRight">
-      <div class="underRight1" ref="rightTop">
+    <div
+      class="underRight"
+      ref="imgWrap"
+    >
+      <div
+        class="underRight1"
+        ref="rightTop"
+        v-if="topShow"
+      >
         <!-- #修改阅读部门 -->
         <right-top-topic
           @hiddenEvent="handleTop"
           @openBottom="openBottom"
+          @openBottomTwo="openBottomTwo"
           @closeBottom="closeBottom"
         ></right-top-topic>
         <!-- 插槽 -->
       </div>
       <div class="underRight2">
-        <div
-          style="
+        <div style="
             padding-top: 1vh;
             display: flex;
             align-items: center;
             line-height: 1.1vh;
             font-size: 0.9vw;
-          "
-        >
+          ">
           <div>
             <el-icon style="margin-left: 0.42vw">
               <CaretLeft />
             </el-icon>
           </div>
-          <div
-            style="
+          <div style="
               font-weight: 600;
               margin-left: 0.2vw;
               width: 49vw;
               color: black;
-            "
-          >
+            ">
             生成题目
           </div>
           <div
@@ -417,14 +500,18 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <!-- #修改阅读部门 -->
+        <!-- #修改阅读部门  -->
+        <!-- #修改隐藏头部 -->
         <template v-if="getTopChecked.isShow">
           <right-under-topic
+            @hiddenTop="hiddenTop"
+            @showTop="showTop"
             ref="saveRef"
             :class="!isOpenBottom ? '' : 'top999'"
           ></right-under-topic>
           <right-generate-topic
             :theme="themeData"
+            :select="isSelect"
             @submit="submitLeft"
             v-if="isOpenBottom"
           ></right-generate-topic>
@@ -433,21 +520,33 @@ onMounted(() => {
         <!-- 插槽 -->
         <!-- <el-button @click="change">ff</el-button> -->
       </div>
-      <!-- 锁购物袋设计：拖拽悬浮 -->
+      <!-- 锁购物袋设计：拖拽悬浮 拖拽1 -->
       <div
-        style="position: absolute; display: inline-block; right: 0"
+        ref="image"
+        @mousedown.prevent="moveImg"
+        style="position: absolute; display: inline-block; left: 96%"
         draggable="true"
         v-if="getTopChecked.isBag"
       >
-        <img class="dragImg" src="../../assets/lockbag.svg" alt="" />
+        <img
+          class="dragImg"
+          src="../../assets/lockbag.svg"
+          alt=""
+        />
       </div>
       <div
-        style="position: absolute; display: inline-block; right: 0"
+        ref="images"
+        @mousedown.prevent="moveImgs"
+        style="position: absolute; display: inline-block; left: 96%"
         draggable="true"
         @click="getTopChecked.handelBag()"
         v-else
       >
-        <img class="dragImg" src="../../assets/usebag.svg" alt="" />
+        <img
+          class="dragImg"
+          src="../../assets/usebag.svg"
+          alt=""
+        />
         <!-- 购物袋小红点 -->
         <!-- #修改 -->
         <div
@@ -461,7 +560,10 @@ onMounted(() => {
     </div>
   </div>
   <!-- 袋子题库 -->
-  <div class="overlay" v-show="showOverlay"></div>
+  <div
+    class="overlay"
+    v-show="showOverlay"
+  ></div>
   <!-- 蒙版元素 -->
   <question-paper-overlay
     v-if="showQuestionPaper"
@@ -473,7 +575,10 @@ onMounted(() => {
     @toggle-overlay="handleOverlayToggle"
   ></bag-problem-set>
 
-  <div v-if="showModal" class="modal">
+  <div
+    v-if="showModal"
+    class="modal"
+  >
     <div class="modal-content">
       <p>{{ errorMessage }}</p>
       <button @click="showModal = false">确定</button>
@@ -484,6 +589,9 @@ onMounted(() => {
 .top999 {
   position: fixed;
   top: 9999px;
+}
+.right-div {
+  // right: 0;
 }
 .selectAll {
   display: flex;

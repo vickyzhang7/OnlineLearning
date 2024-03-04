@@ -31,8 +31,16 @@ const getRightChecked = getCheckedStore();
 const getCheckedL = async () => {
   // console.log(form.value.time.split(",").map((i) => +i));
   //#修改阅读部门 选择为阅读选择的时候出现右下弹窗
-  if (form2.value.questionType == "阅读选择") {
-    emit("openBottom");
+  if (
+    form2.value.questionType == "阅读选择" ||
+    form2.value.questionType == "词汇单项选择"
+  ) {
+    if (form2.value.questionType == "阅读选择") {
+      emit("openBottom");
+    } else {
+      emit("openBottomTwo");
+    }
+
     await formRef.value.validate();
     // console.log(checkedArr11.value);
     getRightChecked.getChecked(
