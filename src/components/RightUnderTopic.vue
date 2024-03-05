@@ -64,7 +64,7 @@
       >
         <img
           src="../assets/loaddingImg.svg"
-          style="width: 16.7vw; height: 17vh"
+          style="width: 25vw; height: 25.5vh"
         />
         <div class="loadding-content">
           <p>生成中...</p>
@@ -151,7 +151,7 @@ const generateHandle = () => {
     step.value = 5;
     startLoading();
   } else {
-    emit("showTop");
+    // emit("showTop");
     getRightUnderChecked.generateProblemCancel();
     window.cancelAnimationFrame(timer.value);
   }
@@ -177,7 +177,7 @@ const startLoading = () => {
       // 动画完成，清除requestAnimationFrame
       window.cancelAnimationFrame(timer.value);
       // #修改隐藏头部
-      emit("showTop");
+      // emit("showTop");
     }
   });
 };
@@ -343,7 +343,7 @@ defineExpose({ generateHandle });
   .loadding-content {
     position: absolute;
     // left: 6vw;
-    top: 16.5vh;
+    top: 20.5vh;
     display: flex;
     width: 100%;
     justify-content: center;

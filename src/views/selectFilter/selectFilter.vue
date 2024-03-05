@@ -147,48 +147,65 @@ const closeBottom = () => {
 const image = ref(null);
 const images = ref(null);
 const imgWrap = ref(null);
+
 const moveImg = (e) => {
   let wrap = imgWrap.value;
   let img = image.value;
   let x = e.pageX - img.offsetLeft;
   let y = e.pageY - img.offsetTop;
-  // 添加鼠标移动事件
-  wrap.addEventListener("mousemove", move);
+  
   function move(e) {
     img.style.right = "none";
     img.style.left = e.pageX - x + "px";
     img.style.top = e.pageY - y + "px";
   }
-  // 添加鼠标抬起事件，鼠标抬起，将事件移除
-  img.addEventListener("mouseup", () => {
+  
+  // 添加鼠标移动事件
+  wrap.addEventListener("mousemove", move);
+
+  // 添加鼠标抬起事件，鼠标抬起时移除事件
+  function onMouseUp() {
     wrap.removeEventListener("mousemove", move);
-  });
-  // 鼠标离开父级元素，把事件移除
+    img.removeEventListener("mouseup", onMouseUp);
+  }
+  img.addEventListener("mouseup", onMouseUp);
+
+  // 鼠标离开父级元素，移除事件
   wrap.addEventListener("mouseout", () => {
     wrap.removeEventListener("mousemove", move);
+    img.removeEventListener("mouseup", onMouseUp);
   });
 };
+
 const moveImgs = (e) => {
   let wrap = imgWrap.value;
   let img = images.value;
   let x = e.pageX - img.offsetLeft;
   let y = e.pageY - img.offsetTop;
-  // 添加鼠标移动事件
-  wrap.addEventListener("mousemove", move);
+  
   function move(e) {
     img.style.right = "none";
     img.style.left = e.pageX - x + "px";
     img.style.top = e.pageY - y + "px";
   }
-  // 添加鼠标抬起事件，鼠标抬起，将事件移除
-  img.addEventListener("mouseup", () => {
+  
+  // 添加鼠标移动事件
+  wrap.addEventListener("mousemove", move);
+
+  // 添加鼠标抬起事件，鼠标抬起时移除事件
+  function onMouseUp() {
     wrap.removeEventListener("mousemove", move);
-  });
-  // 鼠标离开父级元素，把事件移除
+    img.removeEventListener("mouseup", onMouseUp);
+  }
+  img.addEventListener("mouseup", onMouseUp);
+
+  // 鼠标离开父级元素，移除事件
   wrap.addEventListener("mouseout", () => {
     wrap.removeEventListener("mousemove", move);
+    img.removeEventListener("mouseup", onMouseUp);
   });
 };
+
 // #修改隐藏头部
 const topShow = ref(true);
 const hiddenTop = () => {

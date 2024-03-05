@@ -11,6 +11,7 @@
           style="margin-top: 5px; align-items: flex-end"
         >
           <el-select
+            :popper-append-to-body="false"
             v-model="form.theme"
             class="name-ipt"
             placeholder="请输入文章主题，如:碳排放"
