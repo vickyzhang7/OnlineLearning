@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import { getProblemType, getTopInfo } from "@/api/selectFilter";
 import { getCheckedStore } from "@/stores";
 
-
 const emit = defineEmits();
 const form = ref({
   question: "",
@@ -82,11 +81,9 @@ const getSubject = async () => {
 const handleHidden = () => {
   emit("hiddenEvent");
 };
-
 onMounted(() => {
   getSubject(), getRightChecked.initSubject();
 });
-
 </script>
 
 <template>
@@ -182,7 +179,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-:deep(.el-radio__inner) {
+.el-radio__inner {
   display: none;
 }
 .el-form-item {
@@ -196,7 +193,6 @@ onMounted(() => {
 .el-radio__label {
   font-size: 0.9vw;
   color: #000000;
-  
 }
 .el-form-item__error {
   top: 80%;

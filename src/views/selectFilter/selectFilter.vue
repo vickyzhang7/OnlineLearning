@@ -131,14 +131,14 @@ const isOpenBottom = ref(false);
 const openBottom = () => {
   isOpenBottom.value = true;
   isSelect.value = false;
-  console.log(isSelect.value, '传递值');
+  console.log(isSelect.value, "传递值");
 };
 //#词汇单项选择
 const isSelect = ref(false);
 const openBottomTwo = () => {
   isOpenBottom.value = true;
   isSelect.value = true;
-  console.log(isSelect.value, '传递值');
+  console.log(isSelect.value, "传递值");
 };
 const closeBottom = () => {
   isOpenBottom.value = false;
@@ -148,64 +148,66 @@ const image = ref(null);
 const images = ref(null);
 const imgWrap = ref(null);
 
+
+const time1 = ref(null)
+const time2 = ref(null)
+
+const toClick = () => {
+  if (time1.value - time2.value > 500) {
+    return
+  }
+  getTopChecked.handelBag()
+}
+
+const onMouseUp = () => {
+  time1.value = new Date().getTime();
+}
 const moveImg = (e) => {
   let wrap = imgWrap.value;
   let img = image.value;
   let x = e.pageX - img.offsetLeft;
   let y = e.pageY - img.offsetTop;
-  
+  // 添加鼠标移动事件
+  wrap.addEventListener("mousemove", move);
   function move(e) {
     img.style.right = "none";
     img.style.left = e.pageX - x + "px";
     img.style.top = e.pageY - y + "px";
   }
-  
-  // 添加鼠标移动事件
-  wrap.addEventListener("mousemove", move);
-
-  // 添加鼠标抬起事件，鼠标抬起时移除事件
-  function onMouseUp() {
+  // 添加鼠标抬起事件，鼠标抬起，将事件移除
+  img.addEventListener("mouseup", () => {
     wrap.removeEventListener("mousemove", move);
-    img.removeEventListener("mouseup", onMouseUp);
-  }
-  img.addEventListener("mouseup", onMouseUp);
-
-  // 鼠标离开父级元素，移除事件
+  });
+  // 鼠标离开父级元素，把事件移除
   wrap.addEventListener("mouseout", () => {
     wrap.removeEventListener("mousemove", move);
-    img.removeEventListener("mouseup", onMouseUp);
   });
-};
 
+
+
+};
 const moveImgs = (e) => {
+  time2.value = new Date().getTime();
   let wrap = imgWrap.value;
   let img = images.value;
   let x = e.pageX - img.offsetLeft;
   let y = e.pageY - img.offsetTop;
-  
+  // 添加鼠标移动事件
+  wrap.addEventListener("mousemove", move);
   function move(e) {
     img.style.right = "none";
     img.style.left = e.pageX - x + "px";
     img.style.top = e.pageY - y + "px";
   }
-  
-  // 添加鼠标移动事件
-  wrap.addEventListener("mousemove", move);
-
-  // 添加鼠标抬起事件，鼠标抬起时移除事件
-  function onMouseUp() {
+  // 添加鼠标抬起事件，鼠标抬起，将事件移除
+  img.addEventListener("mouseup", () => {
     wrap.removeEventListener("mousemove", move);
-    img.removeEventListener("mouseup", onMouseUp);
-  }
-  img.addEventListener("mouseup", onMouseUp);
-
-  // 鼠标离开父级元素，移除事件
+  });
+  // 鼠标离开父级元素，把事件移除
   wrap.addEventListener("mouseout", () => {
     wrap.removeEventListener("mousemove", move);
-    img.removeEventListener("mouseup", onMouseUp);
   });
 };
-
 // #修改隐藏头部
 const topShow = ref(true);
 const hiddenTop = () => {
@@ -246,10 +248,13 @@ const mutiChangeHandle = (generateId) => {
 };
 const saveRef = ref(null);
 const submitLeft = () => {
-  isOpenBottom.value = false;
   console.log("生成111");
   nextTick(() => {
-    saveRef.value.generateHandle();
+    let tips = saveRef.value.generateHandle();
+    console.log(tips, "111222");
+    if (tips) {
+      isOpenBottom.value = false;
+    }
   });
 };
 // 获取组件传递的主题
@@ -554,9 +559,10 @@ onMounted(() => {
       <div
         ref="images"
         @mousedown.prevent="moveImgs"
+        @mouseup.prevent="onMouseUp"
         style="position: absolute; display: inline-block; left: 96%"
         draggable="true"
-        @click="getTopChecked.handelBag()"
+        @click="toClick"
         v-else
       >
         <img

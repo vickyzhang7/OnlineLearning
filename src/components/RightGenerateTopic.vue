@@ -1,11 +1,12 @@
 <template>
   <div class="big-box">
     <div class="flex-box">
+      <!--  -->
       <el-form
+        :class="!props.select?'':'mgt-80'"
         :model="form"
         label-width="60px"
       >
-
         <el-form-item
           label="主题"
           style="margin-top: 5px; align-items: flex-end"
@@ -273,7 +274,9 @@ const onSubmit = () => {
   border-radius: 16px;
   border: 1px solid #6666ff;
   padding: 4px 20px;
-
+  .el-form-item__label{
+    color: red !important;
+  }
   // 其他内部元素样式也要修改为 :deep()
   :deep(.el-form-item__label) {
     font-weight: bold;
@@ -378,6 +381,9 @@ const onSubmit = () => {
     border-radius: 14px;
     width: 65px;
     height: 25px;
+  }
+  .mgt-80{
+    margin-top: -80px;
   }
   .bottom-box {
     margin-top: -10px;

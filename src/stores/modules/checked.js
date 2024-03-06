@@ -220,22 +220,30 @@ const mapScopeValue = (label) => {
   const generateClick = async (description) => {
     if (checkedArr1.value[1] === null) {
       ElMessage.warning('具体提醒类型');
+      return false
     } else if (checkedArr1.value.length === 0) {
       ElMessage.warning('请完成基础筛选');
+      console.log(11122,'进入');
+      return false
     } else if (checkedTop.value.region === '') {
       ElMessage.warning('请选择地点');
+      return false
     } else if (checkedTop.value.grade === 0) {
       ElMessage.warning('请选择年级');
+      return false
     } else if (checkedTop.value.genre === '') {
       ElMessage.warning('请选择上下册');
+      return false
     } else if (checkedTop.value.subject === '') {
       ElMessage.warning('请选择学科');
+      return false
     } else if (checkedTop.value.textbook === '') {
       ElMessage.warning('请选择教材版本');
+      return false
     } else {//发起请求，开始生成
       if (count >= 5) {
         ElMessage.warning('最多同时生成五个页面！')
-        return
+        return false
       }
       count++
       isLoading.value = true

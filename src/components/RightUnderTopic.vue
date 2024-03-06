@@ -141,15 +141,23 @@ const loaddingBar = ref();
 const input2 = ref();
 const isShow = ref(true);
 
-const generateHandle = () => {
+const generateHandle = async () => {
   if (!getRightUnderChecked.isLoading) {
     // #修改隐藏头部
-    emit("hiddenTop");
     getRightUnderChecked.isLarge = true;
-    getRightUnderChecked.generateClick(input2.value); //生成题目
-    // console.log(step.value);
-    step.value = 5;
-    startLoading();
+    const tips = getRightUnderChecked.generateClick(input2.value); //生成题目
+    let isReturn = false
+    await tips.then(res => {
+      console.log(res);
+      if (res != false) {
+        emit("hiddenTop");
+        step.value = 5;
+        startLoading();
+        isReturn = true;
+      }
+    })
+    console.log(isReturn);
+    return isReturn
   } else {
     // emit("showTop");
     getRightUnderChecked.generateProblemCancel();
@@ -176,6 +184,7 @@ const startLoading = () => {
       // endLoading()
       // 动画完成，清除requestAnimationFrame
       window.cancelAnimationFrame(timer.value);
+
       // #修改隐藏头部
       // emit("showTop");
     }
