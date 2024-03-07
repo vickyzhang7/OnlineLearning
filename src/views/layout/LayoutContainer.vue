@@ -57,6 +57,9 @@ background-color: #1F2940 !important;
     color: #FFFFFF !important;
     border-bottom:#6666FF
 }
+.vertical-nav {
+  width: 80px; /* 调整竖向导航栏的宽度 */
+}
 
 
 </style>

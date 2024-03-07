@@ -179,7 +179,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.el-radio__inner {
+:deep(.el-radio__inner) {
   display: none;
 }
 .el-form-item {

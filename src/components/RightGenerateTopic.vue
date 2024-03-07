@@ -8,7 +8,7 @@
         label-width="60px"
       >
         <el-form-item
-          label="主题"
+          label="主 &nbsp;&nbsp; 题"
           style="margin-top: 5px; align-items: flex-end"
         >
           <el-select
@@ -29,7 +29,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="字数"
+          label="字 &nbsp;&nbsp; 数"
           v-if="!props.select"
         >
           <el-radio-group v-model="form.wordsNum">
@@ -43,7 +43,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item
-          label="题干"
+          label="题 &nbsp;&nbsp; 干"
           v-if="!props.select"
         >
           <div class="flex-ipt-num">
@@ -108,7 +108,7 @@
           </div>
         </el-form-item>
         <el-form-item
-          label="文体"
+          label="文 &nbsp;&nbsp; 体"
           v-if="!props.select"
         >
           <el-radio-group
@@ -197,7 +197,7 @@
             >5%</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="词汇">
+        <el-form-item label="词 &nbsp;&nbsp;  汇">
           <el-radio-group v-model="form.vocabulary">
             <el-radio
               class="round"
@@ -274,8 +274,12 @@ const onSubmit = () => {
   border-radius: 16px;
   border: 1px solid #6666ff;
   padding: 4px 20px;
-  .el-form-item__label{
-    color: red !important;
+  .el-form-item__label {
+  color: rgb(0, 0, 0) !important;
+  margin-right: 15px !important;
+  display: flex;
+  justify-content: space-between  !important;
+  font-weight: bold;
   }
   // 其他内部元素样式也要修改为 :deep()
   :deep(.el-form-item__label) {
@@ -343,9 +347,9 @@ const onSubmit = () => {
   padding-left: 0;
 }
 .big-box {
-  margin-top: 60px; /* 与顶部的距离为10像素 */
-  margin-left: 180px; /* 与左侧的距离为50像素 */
-  width: 70%;
+  margin-top: 50px; /* 与顶部的距离为10像素 */
+  margin-left: 150px; /* 与左侧的距离为50像素 */
+  width: 80%;
   height: 70%;
   display: flex;
   justify-content: center;
