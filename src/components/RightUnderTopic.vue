@@ -59,26 +59,19 @@
       </div>
       <!-- 图片居中 -->
       <div
-        class="loadding-img"
-        v-if="getRightUnderChecked.isLoading"
-      >
-        <img
-          src="../assets/loaddingImg.svg"
-          style="width: 25vw; height: 25.5vh"
-        />
-        <div class="loadding-content">
-          <p>生成中...</p>
-          <!--   <p style="
-        font-family: 'PingFang SC';
-        font-style: normal;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        width: 100px;
-      "></p>
-     -->
-        </div>
-      </div>
+      class="loadding-img"
+      v-if="getRightUnderChecked.isLoading"
+    >
+      <img
+        src="../assets/loaddingImg.svg"
+        style="width: 25vw; height: 25.5vh"
+      />
+    </div>
+    <div class="loadding-content" v-if="getRightUnderChecked.isLoading">
+      <p>我这一生，很有可能会继续孤独下去。对于那些我最亲近的人，我对他们的认识从来都是对着镜子观看模糊不清。我用我的生命在<br>作画，而我的生命已经耗费了一半。在想象中同你握手。<span class="signature">——文森特·梵高</span></p>
+    </div>
+
+
       <!-- 下面是生成提示弹窗 -->
       <el-dialog
         :modal="false"
@@ -349,21 +342,27 @@ defineExpose({ generateHandle });
   align-items: center;
   left: 0vw;
   top: 26vh;
-  .loadding-content {
-    position: absolute;
-    // left: 6vw;
-    top: 20.5vh;
-    display: flex;
-    width: 100%;
-    justify-content: center;
-
-    p {
-      font-size: 0.5vw;
-      // margin-left: 3vw;
-      width: 100%;
-      text-align: center;
-      color: #737373;
-    }
-  }
+  margin-bottom: 20px; 
 }
+
+.loadding-content {
+  position: absolute;
+  margin-top: 200px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 20px;
+  color: #4F4F4F;
+}
+
+.signature {
+  text-align: right;
+  margin-left: 240px; /* 将签名推到右侧 */
+}
+
+
 </style>
