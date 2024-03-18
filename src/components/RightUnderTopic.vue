@@ -347,7 +347,7 @@ defineExpose({ generateHandle });
 
 .loadding-content {
   position: absolute;
-  margin-top: 200px;
+  margin-top: 15%;
   display: flex;
   width: 100%;
   justify-content: center;
