@@ -15,49 +15,32 @@
         <!-- 已有题目菜单对应的界面 -->
         <el-tab-pane label="已有题目">
           <div>
-            <div class="itemCon" v-for="(item, index) in userBagList" :key="item.data.problemId">
-              <div style="position: relative">
-                <!-- <el-checkbox style="position: absolute; top: -0.2vh" v-model="item.isSelet" /> -->
-                <!-- 试题集的问题 -->
-                <p style="margin-left: 1vw;margin-bottom: 1vh;" :id="'pQuestion' + index">{{ replaceBody(index,
-                  item.data.body) }}</p>
-              </div>
-              <div class="subProblem" v-if="item.data.subProblemList
-                ">
-                <!-- 试题集的选项 -->
-                <div v-for="(subItem, subIndex) in item.data.subProblemList" :key="subIndex">
-                  <!-- 1234选项问题 -->
-                  <p class="problem-p" style="margin-left: 1vw;" :id="'pSelect' + index + subIndex">{{ subItem.body }}</p>
-                  <!-- abcd选项 -->
-                  <div class="optionsCon">
-                    <p v-for="(optsubItem, optsubIndex) in subItem.options" :key="optsubIndex" style="margin-left: 1vw;"
-                      :id="'pSelect' + index + subIndex + optsubIndex">{{ optsubItem }}</p>
-                  </div>
-                </div>
-              </div>
-              <div class="optionsCon" v-else>
-
-                <p style="margin-left: 1vw;" class="options-item" v-for="(optItem, optIndex) in item.data.options"
-                  :key="optIndex" :id="'pSelect' + index + '_' + optIndex">{{ optItem }}</p>
-
-              </div>
-              <div class="item-btns">
-                <el-button text class="btn1"
-                  @click="findError(index, item.data.subProblemList, item.data.options)">纠错</el-button>
-                <el-button text class="btn2" @click="deleteProblems(item.data.problemId)">删除</el-button>
-              </div>
-              <div class="item-btns1" v-show='isError'>
-                <el-button text class="btn11"
-                  @click="cancel(index, item.data.subProblemList, item.data.options)">取消</el-button>
-                <el-button text class="btn21"
-                  @click="confirm(index, item.data.subProblemList, item.data.options, item.data.problemId)">确认</el-button>
-              </div>
-            </div>
+            <BagProblem v-for="(item, index) in userBagList"
+                        :key="item.data.problemId"
+                        :item="item"
+                        :index="index"
+                        :isError="isError"
+                        :replaceBody="replaceBody"
+                        :findError="findError"
+                        :deleteProblems="deleteProblems"
+                        :cancel="cancel"
+                        :confirm="confirm" />
           </div>
-
-
         </el-tab-pane>
-        <el-tab-pane label="组成标准试卷">组成标准试卷</el-tab-pane>
+        <el-tab-pane label="组成标准试卷">统计表格
+          <div>
+            <BagProblem v-for="(item, index) in userBagList"
+                        :key="item.data.problemId"
+                        :item="item"
+                        :index="index"
+                        :isError="isError"
+                        :replaceBody="replaceBody"
+                        :findError="findError"
+                        :deleteProblems="deleteProblems"
+                        :cancel="cancel"
+                        :confirm="confirm" />
+          </div>
+        </el-tab-pane>
 
       </el-tabs>
       <!-- 三个图标 -->
@@ -103,6 +86,7 @@ import { getCheckedStore } from "@/stores";
 import { onMounted, ref, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { deleteProblem, getUserProblemList, reSetProblem } from "@/api/selectFilter";
+import BagProblem from '@/components/BagProblem.vue';
 
 const originalp1 = ref("")//原始题文本内容
 const originalp2 = ref([])
