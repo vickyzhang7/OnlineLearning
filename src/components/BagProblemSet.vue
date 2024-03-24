@@ -28,42 +28,43 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="组成标准试卷">
-                        <div>
-                <div class="statistic-table">
+              <div>
+                <div class="statistic-table" style="margin-left: 15px;">
                     <div class="title-box">
                         <span>共{{ getTotalQuestions }}题 </span>
                         <span>平均难度：一般</span>
                         <div class="tag-box">
-                          <el-tag
-                              :key="tag.key"
-                              v-for="tag in prolemList"
-                              closable
-                              :disable-transitions="false"
-                              @close="handleClose(tag.key)"
-                              style="margin-right:5px"
-                          >
-                              <!-- size="medium"   -->
-                              {{ tag.key + ' ' + tag.total + '题' }}                            
-                          </el-tag>
-
-
+                            <el-tag
+                                :key="tag.key"
+                                v-for="tag in prolemList"
+                                closable
+                                :disable-transitions="false"
+                                @close="handleClose(tag.key)"
+                                class="custom-tag"
+                            >
+                                <!-- size="medium"   -->
+                                {{ tag.key + ' ' + tag.total + '题' }}                            
+                            </el-tag>
                         </div>
+
                         
                     </div>
+                    <div style="text-align: justify; margin-bottom: 10px; color: #4F4F4F; font-size: 16px; font-family: PingFang SC; font-weight: bold;">统计数据</div>
                     <div class="total">
                         <div class="progress-item" v-for="i in  prolemList">
                             <span class="spanLeft">{{ i.key }}  ({{ i.total}})</span>
                             <div class="progress">
                               <el-progress
                                   :text-inside="true"
-                                  :stroke-width="22"
+                                  :stroke-width="12"
                                   :percentage="i.val / i.total * 100 > 100 ? 100 : i.val / i.total * 100"
                                   :status="i.status"
+                                  :color="getProgressColor(i.val, i.total)"
                               >
                                   <span class="spot-box" style="color: transparent;">{{ i.val }}</span>
                               </el-progress>
 
-                              <div class="progress-end" :style="{ left: `${i.val / i.total * 100}%` }">
+                              <div class="progress-end" :style="{ left: `${i.val / i.total * 100 > 100 ? 50 : i.val / i.total * 100}%` }">
                                   <div class="circle">
                                       <span class="label">{{ i.val }}</span>
                                   </div>
@@ -76,12 +77,11 @@
                               'less': i.val < i.total,
                               'more': i.val > i.total
                             }">
-                              {{ i.val == i.total ? '完成' : i.val < i.total ? '少'+ (i.total - i.val ): '多'+(i.val - i.total) }}
+                              {{ i.val == i.total ? '&nbsp;✓&nbsp;' : i.val < i.total ? '少'+ (i.total - i.val ): '多'+(i.val - i.total) }}
                             </span>
                         </div>
                     </div>
-
-                </div>
+              </div>
               <BagProblem v-for="(item, index) in userBagList"
                           :key="item.data.problemId"
                           :item="item"
@@ -441,13 +441,14 @@
 };
 const getProgressColor = (current, total) => {
     if (current < total) {
-        return 'exception'; // 红色
+        return '#FF0A0A'; // 红色
     } else if (current === total) {
-        return 'success'; // 紫色
+        return '#6666FF'; // 蓝色
     } else {
-        return 'warning'; // 黄色
+        return '#D9AC0E'; // 黄色
     }
 };
+
 
 
 const prolemList = computed(() => {
@@ -506,7 +507,7 @@ const prolemList = computed(() => {
 
   </script>
   
-  <style lang="scss" scoped>
+<style lang="scss" scoped>
   .bagProblemSet {
     position: fixed;
     right: 1vw;
@@ -518,7 +519,7 @@ const prolemList = computed(() => {
         color: #666;
         .spanLeft {
         margin-right: 15px;
-        margin-left: 15px;
+        margin-left: 10px;
         color: #4F4F4F;
         font-size: 13px;
         font-family: PingFang SC;
@@ -527,75 +528,82 @@ const prolemList = computed(() => {
         word-wrap: break-word;
     }
         .title-box{
-          margin-left: 15px;
           font-family: PingFang SC;
           font-size: 14px; 
-            .tag-box{
-                margin: 6px 0 12px 0;
+          .tag-box {
+              margin: 6px 0 12px 0;
+          }
 
-            }
+          .custom-tag {
+              margin-right: 5px;
+              margin-bottom: 5px; /* 添加底部间距 */
+              background-color: #E8F0FF; /* 背景色 */
+              color: black; /* 文字颜色 */
+          }
         }
 
         .total {
+          border: 1px solid #6666FF; /* 蓝色边框 */
+          padding: 2px; /* 内边距，使内容与边框有些距离 */
+          border-radius: 10px; /* 圆角边框 */
+          width: 60%;
             .progress-item {
                 display: flex;
                 margin-top: 5px;
                 position: relative;
 
                 .progress {
-                    width: 20%; /* 保持水平方向的宽度 */
+                    width: 30%; /* 保持水平方向的宽度 */
                     height: 5%!important;
                     position: relative;
+                    border: 1px solid #6666FF; /* 设置边框 */
+                    border-radius: 10px; /* 设置圆角半径与进度条一致 */
+                    display: inline-block; /* 确保容器大小与进度条一致 */
                     .spot-box {
                         background-color: '#6666ff';
                         width: 50px;
                         height: 50px;
                         border-radius: 50%;
                     }
-
                 }
+                
 
             }
             .spanRight {
-    position: relative;
-    margin-left: 10px;
-    color: #4F4F4F;
-    font-weight: 400;
-    line-height: 20px;
-    word-wrap: break-word;
-}
+                color: #4F4F4F;
+                font-weight: 400;
+                word-wrap: break-word;
+            }
+            .completed {
+              background-color: #6666FF;
+              font-size: 11px;
+              font-family: PingFang SC;
+              font-weight: bold;
+              margin-left: 20px;
+              color: white;
+              padding: 2px 2px;
 
+            }
 
-.completed {
-  background-color: #6666FF;
-  font-size: 13px;
-  font-family: PingFang SC;
-  margin-left: 20px;
-  color: white;
-  padding: 0 5px;
+            .less {
+              background-color: #FF0A0A;
+              font-weight: bold;
+              font-size: 11px;
+              font-family: PingFang SC;
+              margin-left: 20px;
+              color: white;
+              padding: 2px 2px; /* 调整上下内边距 */
+            }
 
-}
-
-.less {
-  background-color: #FF0A0A;
-  font-size: 13px;
-  font-family: PingFang SC;
-  margin-left: 20px;
-  color: white;
-  padding: 0 5px;
-}
-
-.more {
-  background-color: #D9AC0E;
-  font-size: 13px;
-  font-family: PingFang SC;
-  margin-left: 20px;
-  color: white;
-  padding: 0 5px;
-}
-
-
-
+            .more {
+              background-color: #D9AC0E;
+              font-weight: bold;
+              font-size: 11px;
+              font-family: PingFang SC;
+              margin-left: 20px;
+              color: white;
+              padding: 2px 2px;
+            }
         }
     }
 
@@ -803,4 +811,4 @@ const prolemList = computed(() => {
   
   /* 111111111111111111111111111111111 */
   /* 111111111111111111111111111111111 */
-  </style>
+</style>
