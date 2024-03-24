@@ -484,8 +484,14 @@ const  prolemList = computed(() => {
     .statistic-table {
         color: #666;
         .spanLeft {
-            margin-right: 5px;
-        }
+        margin-right: 5px;
+        color: #4F4F4F;
+        font-size: 13px;
+        font-family: PingFang SC;
+        font-weight: 400;
+        line-height: 20px;
+        word-wrap: break-word;
+    }
         .title-box{
             .tag-box{
                 margin: 6px 0 12px 0;
@@ -497,21 +503,30 @@ const  prolemList = computed(() => {
             .progress-item {
                 display: flex;
                 margin-top: 5px;
+                position: relative;
 
                 .progress {
-                    width: 60%;
-                    .spot-box{
+                    width: 20%; /* 保持水平方向的宽度 */
+                    height: 5%!important;
+                    position: relative;
+                    .spot-box {
                         background-color: '#6666ff';
                         width: 50px;
                         height: 50px;
                         border-radius: 50%;
                     }
                 }
+
             }
             .spanRight{
-                margin-left: 5px;
-                // color: white;
-                // background: #6666ff;
+              margin-left: 5px;
+              color: #4F4F4F;
+              font-size: 13px;
+              font-family: PingFang SC;
+              font-weight: 400;
+              line-height: 20px;
+              word-wrap: break-word;
+
             }
 
         }
