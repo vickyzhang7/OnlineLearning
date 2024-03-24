@@ -50,17 +50,34 @@
                         </div>
                         
                     </div>
-                    <span style="color:#666">统计表格</span>
                     <div class="total">
                         <div class="progress-item" v-for="i in  prolemList">
-                            <span class="spanLeft">{{ i.key }}({{ i.total}}):</span>
+                            <span class="spanLeft">{{ i.key }}  ({{ i.total}})</span>
                             <div class="progress">
-                                <el-progress :text-inside="true" :stroke-width="22" :percentage="i.val/i.total * 100 >100 ?100:i.val/i.total * 100 " :status="i.val == i.total ? 'success' : i.val < i.total ? 'exception': 'warning'" >
-                                    <span class="spot-box">{{i.val}}</span>
-                                </el-progress>
+                              <el-progress
+                                  :text-inside="true"
+                                  :stroke-width="22"
+                                  :percentage="i.val / i.total * 100 > 100 ? 100 : i.val / i.total * 100"
+                                  :status="i.status"
+                              >
+                                  <span class="spot-box" style="color: transparent;">{{ i.val }}</span>
+                              </el-progress>
+
+                              <div class="progress-end" :style="{ left: `${i.val / i.total * 100}%` }">
+                                  <div class="circle">
+                                      <span class="label">{{ i.val }}</span>
+                                  </div>
+                              </div>
+
                                 <!-- <el-slider v-model="i.val" disabled :format-tooltip="i.val/i.total * 100 >100 ?100:i.val/i.total * 100 "></el-slider> -->
                             </div>
-                            <span class="spanRight">{{ i.val == i.total ? '完成' : i.val < i.total ? '少'+ (i.total - i.val ): '多'+(i.val - i.total) }}</span>
+                            <span :class="{
+                              'completed': i.val == i.total,
+                              'less': i.val < i.total,
+                              'more': i.val > i.total
+                            }">
+                              {{ i.val == i.total ? '完成' : i.val < i.total ? '少'+ (i.total - i.val ): '多'+(i.val - i.total) }}
+                            </span>
                         </div>
                     </div>
 
@@ -414,16 +431,26 @@
     return generateData.userBagList
   });
   const defaultTotalValues = {
-    '书面表达': 10,
-    '任务型阅读': 8,
-    '单项选择': 5,
+    '书面表达': 1,
+    '任务型阅读': 1,
+    '单项选择': 1,
     '填空题': 5,
     '完形填空': 7,
     '短文填空': 6,
     '阅读理解': 9
 };
+const getProgressColor = (current, total) => {
+    if (current < total) {
+        return 'exception'; // 红色
+    } else if (current === total) {
+        return 'success'; // 紫色
+    } else {
+        return 'warning'; // 黄色
+    }
+};
 
-const  prolemList = computed(() => {
+
+const prolemList = computed(() => {
     let obj = {};
     let newArr = [];
 
@@ -439,27 +466,33 @@ const  prolemList = computed(() => {
     // 将已加入到 bag 中的题型添加到 prolemList 中，并设置 total 为对应的默认值
     for (const key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
+            let total = obj[key];
+            let defaultTotal = defaultTotalValues[key] || 0; // 获取默认值，如果没有则为 0
+            let status = total < defaultTotal ? 'exception' : total == defaultTotal ? 'success' : 'warning';
             newArr.push({
                 key: key,
-                val: obj[key],
-                total: defaultTotalValues[key] // 使用默认值或者设定的默认值
+                val: total,
+                total: defaultTotal,
+                status: status // 设置状态值
             });
         }
     }
 
-    // 将未加入到 bag 中的题型添加到 prolemList 中，并设置 val 和 total 为默认值
+    // 将未加入到 bag 中的题型添加到 prolemList 中，并设置 val 和 total 为默认值，状态值为 'exception'
     for (const genre in defaultTotalValues) {
         if (!obj.hasOwnProperty(genre)) {
             newArr.push({
                 key: genre,
                 val: 0,
-                total: defaultTotalValues[genre]
+                total: defaultTotalValues[genre],
+                status: 'exception' // 设置状态值
             });
         }
     }
 
     return newArr;
 });
+
 
 
 
@@ -484,7 +517,8 @@ const  prolemList = computed(() => {
     .statistic-table {
         color: #666;
         .spanLeft {
-        margin-right: 5px;
+        margin-right: 15px;
+        margin-left: 15px;
         color: #4F4F4F;
         font-size: 13px;
         font-family: PingFang SC;
@@ -493,6 +527,9 @@ const  prolemList = computed(() => {
         word-wrap: break-word;
     }
         .title-box{
+          margin-left: 15px;
+          font-family: PingFang SC;
+          font-size: 14px; 
             .tag-box{
                 margin: 6px 0 12px 0;
 
@@ -515,19 +552,49 @@ const  prolemList = computed(() => {
                         height: 50px;
                         border-radius: 50%;
                     }
+
                 }
 
             }
-            .spanRight{
-              margin-left: 5px;
-              color: #4F4F4F;
-              font-size: 13px;
-              font-family: PingFang SC;
-              font-weight: 400;
-              line-height: 20px;
-              word-wrap: break-word;
+            .spanRight {
+    position: relative;
+    margin-left: 10px;
+    color: #4F4F4F;
+    font-weight: 400;
+    line-height: 20px;
+    word-wrap: break-word;
+}
 
-            }
+
+.completed {
+  background-color: #6666FF;
+  font-size: 13px;
+  font-family: PingFang SC;
+  margin-left: 20px;
+  color: white;
+  padding: 0 5px;
+
+}
+
+.less {
+  background-color: #FF0A0A;
+  font-size: 13px;
+  font-family: PingFang SC;
+  margin-left: 20px;
+  color: white;
+  padding: 0 5px;
+}
+
+.more {
+  background-color: #D9AC0E;
+  font-size: 13px;
+  font-family: PingFang SC;
+  margin-left: 20px;
+  color: white;
+  padding: 0 5px;
+}
+
+
 
         }
     }
@@ -681,6 +748,7 @@ const  prolemList = computed(() => {
         }
       }
     }
+    
   }
   
   .bagProblemSet :deep(.el-tabs__item.is-active) {
@@ -694,6 +762,43 @@ const  prolemList = computed(() => {
   .bagProblemSet :deep(.el-tabs__active-bar) {
     background-color: #6666f6;
   }
+
+  .progress-end {
+    position: absolute;
+    right: -14px; /* 调整圆圈位置，使其在进度条尽头 */
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.circle {
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    border: 1px solid #6666FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: -10px;
+}
+
+.label {
+    color: #6464eb;
+    font-size: 12px;
+    line-height: 1;
+}
+
+
+// :deep(.el-progress) {
+//   .el-progress-bar__inner {
+//     background-color: purple; // 紫色
+//   }
+// }
+
+
+
   
   
   /* 111111111111111111111111111111111 */
